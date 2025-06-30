@@ -146,7 +146,7 @@
             maxNativeZoom: 20
         });
         layer_GoogleSatellite_1;
-        //map.addLayer(layer_GoogleSatellite_1);
+        map.addLayer(layer_GoogleSatellite_1);
         map.createPane('pane_Catastro_2');
         map.getPane('pane_Catastro_2').style.zIndex = 402;
         var layer_Catastro_2 = L.WMS.layer("http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx", "Catastro", {
@@ -157,7 +157,7 @@
             continuousWorld : true,
             tiled: true,
             info_format: 'text/html',
-            opacity: 1,
+            opacity: 0.5,
             identify: false,
             attribution: '',
         });
@@ -176,7 +176,7 @@
             identify: false,
             attribution: '',
         });
-        map.addLayer(layer_FondoMapasrasterdelIGN_3);
+        //map.addLayer(layer_FondoMapasrasterdelIGN_3);
         map.createPane('pane_Nacional19811986_4');
         map.getPane('pane_Nacional19811986_4').style.zIndex = 404;
         var layer_Nacional19811986_4 = L.WMS.layer("https://www.ign.es/wms/pnoa-historico?VERSION=1.3.0", "Nacional_1981-1986", {
