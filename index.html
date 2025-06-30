@@ -418,6 +418,9 @@
                         <td colspan="2">' + (feature.properties['provincia'] !== null ? autolinker.link(String(feature.properties['provincia']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
+		if (feature.properties && feature.properties['nombre']) {
+		    layer.bindTooltip(feature.properties['nombre'], {permanent: true, direction: "right"});
+		}
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
 				addClassToPopupIfMedia(content, e.popup);
