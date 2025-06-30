@@ -1669,7 +1669,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['MATRICULA'] !== null?String('<div style="color: #000000; font-size: 6pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['MATRICULA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_REDPROVCARRETERAS_18'});
+            layer.bindTooltip((layer.feature.properties['MATRICULA'] !== null?String('<div style="color: #000000; font-size: 6pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['MATRICULA']||'') + '</div>', {permanent: true, offset: [-0, -16], className: 'css_REDPROVCARRETERAS_18'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
