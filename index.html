@@ -1741,6 +1741,20 @@
         map.on("layerremove", function(){
             resetLabels([layer_TRMINOSMUNICIPALES_9,layer_REDESTATALAUTOVIAS_12,layer_REDESTATAL_13,layer_REDAUTONOMICA_14,layer_REDPROVCAMINOS_15,layer_REDPROVCARRETERAS_18]);
         });
+		var tooltipThreshold = 12; // Zoom >=12 oculta tooltips
+
+        function updateAllTooltips() {
+            var currentZoom = map.getZoom();
+            var tooltips = document.querySelectorAll('.leaflet-tooltip');
+            tooltips.forEach(function(tooltip) {
+                tooltip.style.display = currentZoom >= tooltipThreshold ? 'none' : 'block';
+            });
+        }
+
+        map.on("zoomend", updateAllTooltips);
+        map.on("layeradd", updateAllTooltips);
+        map.on("layerremove", updateAllTooltips);
+        updateAllTooltips();
         </script>
     </body>
 </html>
