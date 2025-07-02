@@ -1,0 +1,1672 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css">
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>RED DE CARRETERAS Y CAMINOS DIPUTACIÓN PROVINCIAL DE HUELVA</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.wms.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/TRMINOSMUNICIPALES_26.js"></script>
+        <script src="data/PROVINCIA_27.js"></script>
+        <script src="data/NUCLEOSURBANOS_28.js"></script>
+        <script src="data/REDESTATALAUTOVIAS_29.js"></script>
+        <script src="data/REDESTATAL_30.js"></script>
+        <script src="data/REDAUTONOMICA_31.js"></script>
+        <script src="data/ZONASCONSERVACIONCARRETERASYCAMINOS_32.js"></script>
+        <script src="data/REDPROVCAMINOS_33.js"></script>
+        <script src="data/LIMITACIONES_34.js"></script>
+        <script src="data/intersecciones_35.js"></script>
+        <script src="data/REDPROVCARRETERAS_36.js"></script>
+        <script src="data/CLASIFPAVIMENTOanuario2024_37.js"></script>
+        <script src="data/CLASIFANCHURAanuario2024_38.js"></script>
+        <script src="data/CLASIFPORTRFICO_39.js"></script>
+        <script src="data/AFOROS_40.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[37.36217200115444,-6.793729427048954],[37.419332754984296,-6.667907832755198]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var title = new L.Control({'position':'topleft'});
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML = '<h2>RED DE CARRETERAS Y CAMINOS DIPUTACIÓN PROVINCIAL DE HUELVA</h2>';
+        };
+        title.addTo(map);
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.createPane('pane_GoogleSatellite_1');
+        map.getPane('pane_GoogleSatellite_1').style.zIndex = 401;
+        var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_1',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleSatellite_1;
+        map.createPane('pane_FondoMapasrasterdelIGN_2');
+        map.getPane('pane_FondoMapasrasterdelIGN_2').style.zIndex = 402;
+        var layer_FondoMapasrasterdelIGN_2 = L.WMS.layer("https://www.ign.es/wms-inspire/mapa-raster", "mtn_rasterizado", {
+            pane: 'pane_FondoMapasrasterdelIGN_2',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            identify: false,
+            attribution: '',
+        });
+        map.createPane('pane_Nacional19811986_3');
+        map.getPane('pane_Nacional19811986_3').style.zIndex = 403;
+        var layer_Nacional19811986_3 = L.WMS.layer("https://www.ign.es/wms/pnoa-historico?VERSION=1.3.0", "Nacional_1981-1986", {
+            pane: 'pane_Nacional19811986_3',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            identify: false,
+            attribution: '',
+        });
+        map.createPane('pane_AmericanoSerieB19561957_4');
+        map.getPane('pane_AmericanoSerieB19561957_4').style.zIndex = 404;
+        var layer_AmericanoSerieB19561957_4 = L.WMS.layer("https://www.ign.es/wms/pnoa-historico?VERSION=1.3.0", "AMS_1956-1957", {
+            pane: 'pane_AmericanoSerieB19561957_4',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            identify: false,
+            attribution: '',
+        });
+        map.createPane('pane_Interministerial19731986_5');
+        map.getPane('pane_Interministerial19731986_5').style.zIndex = 405;
+        var layer_Interministerial19731986_5 = L.WMS.layer("https://www.ign.es/wms/pnoa-historico?VERSION=1.3.0", "Interministerial_1973-1986", {
+            pane: 'pane_Interministerial19731986_5',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            identify: false,
+            attribution: '',
+        });
+        map.createPane('pane_PNOA2022_6');
+        map.getPane('pane_PNOA2022_6').style.zIndex = 406;
+        var layer_PNOA2022_6 = L.WMS.layer("https://www.ign.es/wms/pnoa-historico?VERSION=1.3.0", "PNOA2022", {
+            pane: 'pane_PNOA2022_6',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            identify: false,
+            attribution: '',
+        });
+        map.createPane('pane_Catastro_7');
+        map.getPane('pane_Catastro_7').style.zIndex = 407;
+        var layer_Catastro_7 = L.WMS.layer("http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx", "Catastro", {
+            pane: 'pane_Catastro_7',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_REDIAMWMSEspaciosNaturalesProtegidosdeAndalucaEENNPP_8');
+        map.getPane('pane_REDIAMWMSEspaciosNaturalesProtegidosdeAndalucaEENNPP_8').style.zIndex = 408;
+        var layer_REDIAMWMSEspaciosNaturalesProtegidosdeAndalucaEENNPP_8 = L.WMS.layer("https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_Espacios_Naturales_Protegidos", "REDIAM", {
+            pane: 'pane_REDIAMWMSEspaciosNaturalesProtegidosdeAndalucaEENNPP_8',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9');
+        map.getPane('pane_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9').style.zIndex = 409;
+        var layer_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9 = L.WMS.layer("https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_Inventario_VVPP", "REDIAM", {
+            pane: 'pane_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_Lmitetierraagua_10');
+        map.getPane('pane_Lmitetierraagua_10').style.zIndex = 410;
+        var layer_Lmitetierraagua_10 = L.WMS.layer("https://servicios.idee.es/wms-inspire/hidrografia", "HY.PhysicalWaters.LandWaterBoundary", {
+            pane: 'pane_Lmitetierraagua_10',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_Redhidrogrfica_11');
+        map.getPane('pane_Redhidrogrfica_11').style.zIndex = 411;
+        var layer_Redhidrogrfica_11 = L.WMS.layer("https://servicios.idee.es/wms-inspire/hidrografia", "HY.Network", {
+            pane: 'pane_Redhidrogrfica_11',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_Masasdeagua_12');
+        map.getPane('pane_Masasdeagua_12').style.zIndex = 412;
+        var layer_Masasdeagua_12 = L.WMS.layer("https://servicios.idee.es/wms-inspire/hidrografia", "HY.PhysicalWaters.Waterbodies", {
+            pane: 'pane_Masasdeagua_12',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_Humedales_13');
+        map.getPane('pane_Humedales_13').style.zIndex = 413;
+        var layer_Humedales_13 = L.WMS.layer("https://servicios.idee.es/wms-inspire/hidrografia", "HY.PhysicalWaters.Wetland", {
+            pane: 'pane_Humedales_13',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_12InfraestructurasGeogrficas_14');
+        map.getPane('pane_12InfraestructurasGeogrficas_14').style.zIndex = 414;
+        var layer_12InfraestructurasGeogrficas_14 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "12_Infraestructuras_Geograficas", {
+            pane: 'pane_12InfraestructurasGeogrficas_14',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_11InfraestructurasMedioAmbientales_15');
+        map.getPane('pane_11InfraestructurasMedioAmbientales_15').style.zIndex = 415;
+        var layer_11InfraestructurasMedioAmbientales_15 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "11_Infraestructuras_MedioAmientales", {
+            pane: 'pane_11InfraestructurasMedioAmbientales_15',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_10InfraestructurasHidralicas_16');
+        map.getPane('pane_10InfraestructurasHidralicas_16').style.zIndex = 416;
+        var layer_10InfraestructurasHidralicas_16 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "10_Infraestructuras_Hidraulicas", {
+            pane: 'pane_10InfraestructurasHidralicas_16',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_09InfraestructurasEnergticasydeTelecomunicaciones_17');
+        map.getPane('pane_09InfraestructurasEnergticasydeTelecomunicaciones_17').style.zIndex = 417;
+        var layer_09InfraestructurasEnergticasydeTelecomunicaciones_17 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "09_Infraestructuras_EnergeticasyTelecomunicaciones", {
+            pane: 'pane_09InfraestructurasEnergticasydeTelecomunicaciones_17',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_08InfraestructurasdeTransportes_18');
+        map.getPane('pane_08InfraestructurasdeTransportes_18').style.zIndex = 418;
+        var layer_08InfraestructurasdeTransportes_18 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "08_Infraestructuras_Transportes", {
+            pane: 'pane_08InfraestructurasdeTransportes_18',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_07Servicios_19');
+        map.getPane('pane_07Servicios_19').style.zIndex = 419;
+        var layer_07Servicios_19 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "07_Servicios", {
+            pane: 'pane_07Servicios_19',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_06SistemaUrbano_20');
+        map.getPane('pane_06SistemaUrbano_20').style.zIndex = 420;
+        var layer_06SistemaUrbano_20 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "06_Textos_Sistema_Urbano", {
+            pane: 'pane_06SistemaUrbano_20',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_05RedViaria_21');
+        map.getPane('pane_05RedViaria_21').style.zIndex = 421;
+        var layer_05RedViaria_21 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "05_Textos_Red_Viaria", {
+            pane: 'pane_05RedViaria_21',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_04CubiertaTerrestre_22');
+        map.getPane('pane_04CubiertaTerrestre_22').style.zIndex = 422;
+        var layer_04CubiertaTerrestre_22 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "04_Textos_Cubierta_Terrestre", {
+            pane: 'pane_04CubiertaTerrestre_22',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_03RedHidrogrfica_23');
+        map.getPane('pane_03RedHidrogrfica_23').style.zIndex = 423;
+        var layer_03RedHidrogrfica_23 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "03_Red_Hidrografica", {
+            pane: 'pane_03RedHidrogrfica_23',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_02Relieve_24');
+        map.getPane('pane_02Relieve_24').style.zIndex = 424;
+        var layer_02Relieve_24 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "02_Relieve", {
+            pane: 'pane_02Relieve_24',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        map.createPane('pane_01CartografaBaseCartogrficadeAndaluca_25');
+        map.getPane('pane_01CartografaBaseCartogrficadeAndaluca_25').style.zIndex = 425;
+        var layer_01CartografaBaseCartogrficadeAndaluca_25 = L.WMS.layer("http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms", "01_Textos_BCA", {
+            pane: 'pane_01CartografaBaseCartogrficadeAndaluca_25',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+        function pop_TRMINOSMUNICIPALES_26(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">nombre</th>\
+                        <td class="visible-with-data" id="nombre">' + (feature.properties['nombre'] !== null ? autolinker.link(String(feature.properties['nombre']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">cod_mun</th>\
+                        <td class="visible-with-data" id="cod_mun">' + (feature.properties['cod_mun'] !== null ? autolinker.link(String(feature.properties['cod_mun']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_TRMINOSMUNICIPALES_26_0() {
+            return {
+                pane: 'pane_TRMINOSMUNICIPALES_26',
+                opacity: 1,
+                color: 'rgba(191,191,191,1.0)',
+                dashArray: '5.0,1.0,2.0,1.0',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,0.2)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_TRMINOSMUNICIPALES_26');
+        map.getPane('pane_TRMINOSMUNICIPALES_26').style.zIndex = 426;
+        map.getPane('pane_TRMINOSMUNICIPALES_26').style['mix-blend-mode'] = 'normal';
+        var layer_TRMINOSMUNICIPALES_26 = new L.geoJson(json_TRMINOSMUNICIPALES_26, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_TRMINOSMUNICIPALES_26',
+            layerName: 'layer_TRMINOSMUNICIPALES_26',
+            pane: 'pane_TRMINOSMUNICIPALES_26',
+            onEachFeature: pop_TRMINOSMUNICIPALES_26,
+            style: style_TRMINOSMUNICIPALES_26_0,
+        });
+        bounds_group.addLayer(layer_TRMINOSMUNICIPALES_26);
+        function pop_PROVINCIA_27(feature, layer) {
+            var popupContent = '<table>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PROVINCIA_27_0() {
+            return {
+                pane: 'pane_PROVINCIA_27',
+                opacity: 1,
+                color: 'rgba(191,191,191,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,0.2)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_PROVINCIA_27');
+        map.getPane('pane_PROVINCIA_27').style.zIndex = 427;
+        map.getPane('pane_PROVINCIA_27').style['mix-blend-mode'] = 'normal';
+        var layer_PROVINCIA_27 = new L.geoJson(json_PROVINCIA_27, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_PROVINCIA_27',
+            layerName: 'layer_PROVINCIA_27',
+            pane: 'pane_PROVINCIA_27',
+            onEachFeature: pop_PROVINCIA_27,
+            style: style_PROVINCIA_27_0,
+        });
+        bounds_group.addLayer(layer_PROVINCIA_27);
+        map.addLayer(layer_PROVINCIA_27);
+        function pop_NUCLEOSURBANOS_28(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">nombre</th>\
+                        <td class="visible-with-data" id="nombre">' + (feature.properties['nombre'] !== null ? autolinker.link(String(feature.properties['nombre']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">nivel</th>\
+                        <td class="visible-with-data" id="nivel">' + (feature.properties['nivel'] !== null ? autolinker.link(String(feature.properties['nivel']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">cod_mun</th>\
+                        <td class="visible-with-data" id="cod_mun">' + (feature.properties['cod_mun'] !== null ? autolinker.link(String(feature.properties['cod_mun']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_NUCLEOSURBANOS_28_0() {
+            return {
+                pane: 'pane_NUCLEOSURBANOS_28',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(210,109,60,0.5725490196078431)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_NUCLEOSURBANOS_28');
+        map.getPane('pane_NUCLEOSURBANOS_28').style.zIndex = 428;
+        map.getPane('pane_NUCLEOSURBANOS_28').style['mix-blend-mode'] = 'normal';
+        var layer_NUCLEOSURBANOS_28 = new L.geoJson(json_NUCLEOSURBANOS_28, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_NUCLEOSURBANOS_28',
+            layerName: 'layer_NUCLEOSURBANOS_28',
+            pane: 'pane_NUCLEOSURBANOS_28',
+            onEachFeature: pop_NUCLEOSURBANOS_28,
+            style: style_NUCLEOSURBANOS_28_0,
+        });
+        bounds_group.addLayer(layer_NUCLEOSURBANOS_28);
+        map.addLayer(layer_NUCLEOSURBANOS_28);
+        function pop_REDESTATALAUTOVIAS_29(feature, layer) {
+            var popupContent = '<table>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_REDESTATALAUTOVIAS_29_0() {
+            return {
+                pane: 'pane_REDESTATALAUTOVIAS_29',
+                opacity: 1,
+                color: 'rgba(128,128,128,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 5.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        function style_REDESTATALAUTOVIAS_29_1() {
+            return {
+                pane: 'pane_REDESTATALAUTOVIAS_29',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_REDESTATALAUTOVIAS_29');
+        map.getPane('pane_REDESTATALAUTOVIAS_29').style.zIndex = 429;
+        map.getPane('pane_REDESTATALAUTOVIAS_29').style['mix-blend-mode'] = 'normal';
+        var layer_REDESTATALAUTOVIAS_29 = new L.geoJson.multiStyle(json_REDESTATALAUTOVIAS_29, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_REDESTATALAUTOVIAS_29',
+            layerName: 'layer_REDESTATALAUTOVIAS_29',
+            pane: 'pane_REDESTATALAUTOVIAS_29',
+            onEachFeature: pop_REDESTATALAUTOVIAS_29,
+            styles: [style_REDESTATALAUTOVIAS_29_0,style_REDESTATALAUTOVIAS_29_1,]
+        });
+        bounds_group.addLayer(layer_REDESTATALAUTOVIAS_29);
+        map.addLayer(layer_REDESTATALAUTOVIAS_29);
+        function pop_REDESTATAL_30(feature, layer) {
+            var popupContent = '<table>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_REDESTATAL_30_0() {
+            return {
+                pane: 'pane_REDESTATAL_30',
+                opacity: 1,
+                color: 'rgba(128,128,128,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        function style_REDESTATAL_30_1() {
+            return {
+                pane: 'pane_REDESTATAL_30',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_REDESTATAL_30');
+        map.getPane('pane_REDESTATAL_30').style.zIndex = 430;
+        map.getPane('pane_REDESTATAL_30').style['mix-blend-mode'] = 'normal';
+        var layer_REDESTATAL_30 = new L.geoJson.multiStyle(json_REDESTATAL_30, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_REDESTATAL_30',
+            layerName: 'layer_REDESTATAL_30',
+            pane: 'pane_REDESTATAL_30',
+            onEachFeature: pop_REDESTATAL_30,
+            styles: [style_REDESTATAL_30_0,style_REDESTATAL_30_1,]
+        });
+        bounds_group.addLayer(layer_REDESTATAL_30);
+        map.addLayer(layer_REDESTATAL_30);
+        function pop_REDAUTONOMICA_31(feature, layer) {
+            var popupContent = '<table>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_REDAUTONOMICA_31_0() {
+            return {
+                pane: 'pane_REDAUTONOMICA_31',
+                opacity: 1,
+                color: 'rgba(128,128,128,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        function style_REDAUTONOMICA_31_1() {
+            return {
+                pane: 'pane_REDAUTONOMICA_31',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_REDAUTONOMICA_31');
+        map.getPane('pane_REDAUTONOMICA_31').style.zIndex = 431;
+        map.getPane('pane_REDAUTONOMICA_31').style['mix-blend-mode'] = 'normal';
+        var layer_REDAUTONOMICA_31 = new L.geoJson.multiStyle(json_REDAUTONOMICA_31, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_REDAUTONOMICA_31',
+            layerName: 'layer_REDAUTONOMICA_31',
+            pane: 'pane_REDAUTONOMICA_31',
+            onEachFeature: pop_REDAUTONOMICA_31,
+            styles: [style_REDAUTONOMICA_31_0,style_REDAUTONOMICA_31_1,]
+        });
+        bounds_group.addLayer(layer_REDAUTONOMICA_31);
+        map.addLayer(layer_REDAUTONOMICA_31);
+        function pop_ZONASCONSERVACIONCARRETERASYCAMINOS_32(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">zona</th>\
+                        <td class="visible-with-data" id="zona">' + (feature.properties['zona'] !== null ? autolinker.link(String(feature.properties['zona']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_ZONASCONSERVACIONCARRETERASYCAMINOS_32_0(feature) {
+            switch(String(feature.properties['zona'])) {
+                case 'NORTE':
+                    return {
+                pane: 'pane_ZONASCONSERVACIONCARRETERASYCAMINOS_32',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(33,100,0,0.5)',
+                interactive: true,
+            }
+                    break;
+                case 'SUR':
+                    return {
+                pane: 'pane_ZONASCONSERVACIONCARRETERASYCAMINOS_32',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(35,23,205,0.5)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_ZONASCONSERVACIONCARRETERASYCAMINOS_32');
+        map.getPane('pane_ZONASCONSERVACIONCARRETERASYCAMINOS_32').style.zIndex = 432;
+        map.getPane('pane_ZONASCONSERVACIONCARRETERASYCAMINOS_32').style['mix-blend-mode'] = 'normal';
+        var layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32 = new L.geoJson(json_ZONASCONSERVACIONCARRETERASYCAMINOS_32, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ZONASCONSERVACIONCARRETERASYCAMINOS_32',
+            layerName: 'layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32',
+            pane: 'pane_ZONASCONSERVACIONCARRETERASYCAMINOS_32',
+            onEachFeature: pop_ZONASCONSERVACIONCARRETERASYCAMINOS_32,
+            style: style_ZONASCONSERVACIONCARRETERASYCAMINOS_32_0,
+        });
+        bounds_group.addLayer(layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32);
+        function pop_REDPROVCAMINOS_33(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">MATRICULA</th>\
+                        <td class="visible-with-data" id="MATRICULA">' + (feature.properties['MATRICULA'] !== null ? autolinker.link(String(feature.properties['MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DENOM</th>\
+                        <td class="visible-with-data" id="DENOM">' + (feature.properties['DENOM'] !== null ? autolinker.link(String(feature.properties['DENOM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LONGITUD</th>\
+                        <td class="visible-with-data" id="LONGITUD">' + (feature.properties['LONGITUD'] !== null ? autolinker.link(String(feature.properties['LONGITUD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_REDPROVCAMINOS_33_0() {
+            return {
+                pane: 'pane_REDPROVCAMINOS_33',
+                opacity: 1,
+                color: 'rgba(28,87,165,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_REDPROVCAMINOS_33');
+        map.getPane('pane_REDPROVCAMINOS_33').style.zIndex = 433;
+        map.getPane('pane_REDPROVCAMINOS_33').style['mix-blend-mode'] = 'normal';
+        var layer_REDPROVCAMINOS_33 = new L.geoJson(json_REDPROVCAMINOS_33, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_REDPROVCAMINOS_33',
+            layerName: 'layer_REDPROVCAMINOS_33',
+            pane: 'pane_REDPROVCAMINOS_33',
+            onEachFeature: pop_REDPROVCAMINOS_33,
+            style: style_REDPROVCAMINOS_33_0,
+        });
+        bounds_group.addLayer(layer_REDPROVCAMINOS_33);
+        map.addLayer(layer_REDPROVCAMINOS_33);
+        function pop_LIMITACIONES_34(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_MATRICULA</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_MATRICULA">' + (feature.properties['DPH_limitaciones_MATRICULA'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_INI</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_INI">' + (feature.properties['DPH_limitaciones_INI'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_INI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_FIN</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_FIN">' + (feature.properties['DPH_limitaciones_FIN'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_FIN']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_L TRAMO</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_L TRAMO">' + (feature.properties['DPH_limitaciones_L TRAMO'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_L TRAMO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_RAZON</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_RAZON">' + (feature.properties['DPH_limitaciones_RAZON'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_RAZON']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_UBICACION</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_UBICACION">' + (feature.properties['DPH_limitaciones_UBICACION'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_UBICACION']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_LIM_MASA</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_LIM_MASA">' + (feature.properties['DPH_limitaciones_LIM_MASA'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_LIM_MASA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_LIM_ANCH</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_LIM_ANCH">' + (feature.properties['DPH_limitaciones_LIM_ANCH'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_LIM_ANCH']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_LIM_ALT</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_LIM_ALT">' + (feature.properties['DPH_limitaciones_LIM_ALT'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_LIM_ALT']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_limitaciones_LIM_LONG</th>\
+                        <td class="visible-with-data" id="DPH_limitaciones_LIM_LONG">' + (feature.properties['DPH_limitaciones_LIM_LONG'] !== null ? autolinker.link(String(feature.properties['DPH_limitaciones_LIM_LONG']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_LIMITACIONES_34_0() {
+            return {
+                pane: 'pane_LIMITACIONES_34',
+                opacity: 1,
+                color: 'rgba(255,0,0,1.0)',
+                dashArray: '11.0,22.0',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 11.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_LIMITACIONES_34');
+        map.getPane('pane_LIMITACIONES_34').style.zIndex = 434;
+        map.getPane('pane_LIMITACIONES_34').style['mix-blend-mode'] = 'normal';
+        var layer_LIMITACIONES_34 = new L.geoJson(json_LIMITACIONES_34, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_LIMITACIONES_34',
+            layerName: 'layer_LIMITACIONES_34',
+            pane: 'pane_LIMITACIONES_34',
+            onEachFeature: pop_LIMITACIONES_34,
+            style: style_LIMITACIONES_34_0,
+        });
+        bounds_group.addLayer(layer_LIMITACIONES_34);
+        function pop_intersecciones_35(feature, layer) {
+            var popupContent = '<table>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_intersecciones_35_0() {
+            return {
+                pane: 'pane_intersecciones_35',
+                opacity: 1,
+                color: 'rgba(235,235,0,1.0)',
+                dashArray: '2.0,4.0',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_intersecciones_35');
+        map.getPane('pane_intersecciones_35').style.zIndex = 435;
+        map.getPane('pane_intersecciones_35').style['mix-blend-mode'] = 'normal';
+        var layer_intersecciones_35 = new L.geoJson(json_intersecciones_35, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_intersecciones_35',
+            layerName: 'layer_intersecciones_35',
+            pane: 'pane_intersecciones_35',
+            onEachFeature: pop_intersecciones_35,
+            style: style_intersecciones_35_0,
+        });
+        bounds_group.addLayer(layer_intersecciones_35);
+        map.addLayer(layer_intersecciones_35);
+        function pop_REDPROVCARRETERAS_36(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">DPH_titularidad_MATRICULA</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_MATRICULA">' + (feature.properties['DPH_titularidad_MATRICULA'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_titularidad_INI</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_INI">' + (feature.properties['DPH_titularidad_INI'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_INI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_titularidad_FIN</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_FIN">' + (feature.properties['DPH_titularidad_FIN'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_FIN']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_titularidad_L_tramo</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_L_tramo">' + (feature.properties['DPH_titularidad_L_tramo'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_L_tramo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_titularidad_TITULARIDAD</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_TITULARIDAD">' + (feature.properties['DPH_titularidad_TITULARIDAD'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_TITULARIDAD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">RED_PROV_CARRETERAS_base_ZONA CONS</th>\
+                        <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_ZONA CONS">' + (feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">RED_PROV_CARRETERAS_base_DENOM</th>\
+                        <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_DENOM">' + (feature.properties['RED_PROV_CARRETERAS_base_DENOM'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_DENOM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_REDPROVCARRETERAS_36_0() {
+            return {
+                pane: 'pane_REDPROVCARRETERAS_36',
+                interactive: true,
+            }
+        }
+        function style_REDPROVCARRETERAS_36_1() {
+            return {
+                pane: 'pane_REDPROVCARRETERAS_36',
+                interactive: true,
+            }
+        }
+        function style_REDPROVCARRETERAS_36_2() {
+            return {
+                pane: 'pane_REDPROVCARRETERAS_36',
+                opacity: 1,
+                color: 'rgba(255,255,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_REDPROVCARRETERAS_36');
+        map.getPane('pane_REDPROVCARRETERAS_36').style.zIndex = 436;
+        map.getPane('pane_REDPROVCARRETERAS_36').style['mix-blend-mode'] = 'normal';
+        var layer_REDPROVCARRETERAS_36 = new L.geoJson.multiStyle(json_REDPROVCARRETERAS_36, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_REDPROVCARRETERAS_36',
+            layerName: 'layer_REDPROVCARRETERAS_36',
+            pane: 'pane_REDPROVCARRETERAS_36',
+            onEachFeature: pop_REDPROVCARRETERAS_36,
+            styles: [style_REDPROVCARRETERAS_36_0,style_REDPROVCARRETERAS_36_1,style_REDPROVCARRETERAS_36_2,]
+        });
+        bounds_group.addLayer(layer_REDPROVCARRETERAS_36);
+        map.addLayer(layer_REDPROVCARRETERAS_36);
+        function pop_CLASIFPAVIMENTOanuario2024_37(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">DPH_tipopavimento_MATRICULA</th>\
+                        <td class="visible-with-data" id="DPH_tipopavimento_MATRICULA">' + (feature.properties['DPH_tipopavimento_MATRICULA'] !== null ? autolinker.link(String(feature.properties['DPH_tipopavimento_MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_tipopavimento_INI</th>\
+                        <td class="visible-with-data" id="DPH_tipopavimento_INI">' + (feature.properties['DPH_tipopavimento_INI'] !== null ? autolinker.link(String(feature.properties['DPH_tipopavimento_INI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_tipopavimento_FIN</th>\
+                        <td class="visible-with-data" id="DPH_tipopavimento_FIN">' + (feature.properties['DPH_tipopavimento_FIN'] !== null ? autolinker.link(String(feature.properties['DPH_tipopavimento_FIN']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_tipopavimento_L_tramo</th>\
+                        <td class="visible-with-data" id="DPH_tipopavimento_L_tramo">' + (feature.properties['DPH_tipopavimento_L_tramo'] !== null ? autolinker.link(String(feature.properties['DPH_tipopavimento_L_tramo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_tipopavimento_PAVIMENTO</th>\
+                        <td class="visible-with-data" id="DPH_tipopavimento_PAVIMENTO">' + (feature.properties['DPH_tipopavimento_PAVIMENTO'] !== null ? autolinker.link(String(feature.properties['DPH_tipopavimento_PAVIMENTO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_CLASIFPAVIMENTOanuario2024_37_0(feature) {
+            switch(String(feature.properties['DPH_tipopavimento_PAVIMENTO'])) {
+                case 'A':
+                    return {
+                pane: 'pane_CLASIFPAVIMENTOanuario2024_37',
+                opacity: 1,
+                color: 'rgba(77,77,77,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'R':
+                    return {
+                pane: 'pane_CLASIFPAVIMENTOanuario2024_37',
+                opacity: 1,
+                color: 'rgba(204,204,204,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_CLASIFPAVIMENTOanuario2024_37');
+        map.getPane('pane_CLASIFPAVIMENTOanuario2024_37').style.zIndex = 437;
+        map.getPane('pane_CLASIFPAVIMENTOanuario2024_37').style['mix-blend-mode'] = 'normal';
+        var layer_CLASIFPAVIMENTOanuario2024_37 = new L.geoJson(json_CLASIFPAVIMENTOanuario2024_37, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CLASIFPAVIMENTOanuario2024_37',
+            layerName: 'layer_CLASIFPAVIMENTOanuario2024_37',
+            pane: 'pane_CLASIFPAVIMENTOanuario2024_37',
+            onEachFeature: pop_CLASIFPAVIMENTOanuario2024_37,
+            style: style_CLASIFPAVIMENTOanuario2024_37_0,
+        });
+        bounds_group.addLayer(layer_CLASIFPAVIMENTOanuario2024_37);
+        function pop_CLASIFANCHURAanuario2024_38(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">DPH_tipoanchura_MATRICULA</th>\
+                        <td class="visible-with-data" id="DPH_tipoanchura_MATRICULA">' + (feature.properties['DPH_tipoanchura_MATRICULA'] !== null ? autolinker.link(String(feature.properties['DPH_tipoanchura_MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_tipoanchura_INI</th>\
+                        <td class="visible-with-data" id="DPH_tipoanchura_INI">' + (feature.properties['DPH_tipoanchura_INI'] !== null ? autolinker.link(String(feature.properties['DPH_tipoanchura_INI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_tipoanchura_FIN</th>\
+                        <td class="visible-with-data" id="DPH_tipoanchura_FIN">' + (feature.properties['DPH_tipoanchura_FIN'] !== null ? autolinker.link(String(feature.properties['DPH_tipoanchura_FIN']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_tipoanchura_L_tramo</th>\
+                        <td class="visible-with-data" id="DPH_tipoanchura_L_tramo">' + (feature.properties['DPH_tipoanchura_L_tramo'] !== null ? autolinker.link(String(feature.properties['DPH_tipoanchura_L_tramo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_tipoanchura_ANCHO</th>\
+                        <td class="visible-with-data" id="DPH_tipoanchura_ANCHO">' + (feature.properties['DPH_tipoanchura_ANCHO'] !== null ? autolinker.link(String(feature.properties['DPH_tipoanchura_ANCHO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_CLASIFANCHURAanuario2024_38_0(feature) {
+            switch(String(feature.properties['DPH_tipoanchura_ANCHO'])) {
+                case '<5':
+                    return {
+                pane: 'pane_CLASIFANCHURAanuario2024_38',
+                opacity: 1,
+                color: 'rgba(156,205,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case '>7':
+                    return {
+                pane: 'pane_CLASIFANCHURAanuario2024_38',
+                opacity: 1,
+                color: 'rgba(82,127,181,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case '5-7':
+                    return {
+                pane: 'pane_CLASIFANCHURAanuario2024_38',
+                opacity: 1,
+                color: 'rgba(8,48,107,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_CLASIFANCHURAanuario2024_38');
+        map.getPane('pane_CLASIFANCHURAanuario2024_38').style.zIndex = 438;
+        map.getPane('pane_CLASIFANCHURAanuario2024_38').style['mix-blend-mode'] = 'normal';
+        var layer_CLASIFANCHURAanuario2024_38 = new L.geoJson(json_CLASIFANCHURAanuario2024_38, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CLASIFANCHURAanuario2024_38',
+            layerName: 'layer_CLASIFANCHURAanuario2024_38',
+            pane: 'pane_CLASIFANCHURAanuario2024_38',
+            onEachFeature: pop_CLASIFANCHURAanuario2024_38,
+            style: style_CLASIFANCHURAanuario2024_38_0,
+        });
+        bounds_group.addLayer(layer_CLASIFANCHURAanuario2024_38);
+        function pop_CLASIFPORTRFICO_39(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">DPH_trafico_MATRICULA</th>\
+                        <td class="visible-with-data" id="DPH_trafico_MATRICULA">' + (feature.properties['DPH_trafico_MATRICULA'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_trafico_INICIO_TRAMO</th>\
+                        <td class="visible-with-data" id="DPH_trafico_INICIO_TRAMO">' + (feature.properties['DPH_trafico_INICIO_TRAMO'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_INICIO_TRAMO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_trafico_FINAL_TRAMO</th>\
+                        <td class="visible-with-data" id="DPH_trafico_FINAL_TRAMO">' + (feature.properties['DPH_trafico_FINAL_TRAMO'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_FINAL_TRAMO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_trafico_L TRAMO CALCULO</th>\
+                        <td class="visible-with-data" id="DPH_trafico_L TRAMO CALCULO">' + (feature.properties['DPH_trafico_L TRAMO CALCULO'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_L TRAMO CALCULO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_trafico_IMD MEDIA</th>\
+                        <td class="visible-with-data" id="DPH_trafico_IMD MEDIA">' + (feature.properties['DPH_trafico_IMD MEDIA'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_IMD MEDIA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_trafico_IMDp MEDIA</th>\
+                        <td class="visible-with-data" id="DPH_trafico_IMDp MEDIA">' + (feature.properties['DPH_trafico_IMDp MEDIA'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_IMDp MEDIA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_trafico_INTERVALO IMD</th>\
+                        <td class="visible-with-data" id="DPH_trafico_INTERVALO IMD">' + (feature.properties['DPH_trafico_INTERVALO IMD'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_INTERVALO IMD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_trafico_CAT TRAF PESADO</th>\
+                        <td class="visible-with-data" id="DPH_trafico_CAT TRAF PESADO">' + (feature.properties['DPH_trafico_CAT TRAF PESADO'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_CAT TRAF PESADO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DPH_trafico_VEH-KM A�O</th>\
+                        <td class="visible-with-data" id="DPH_trafico_VEH-KM A�O">' + (feature.properties['DPH_trafico_VEH-KM A�O'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_VEH-KM A�O']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_CLASIFPORTRFICO_39_0(feature) {
+            switch(String(feature.properties['DPH_trafico_CAT TRAF PESADO'])) {
+                case 'T2':
+                    return {
+                pane: 'pane_CLASIFPORTRFICO_39',
+                opacity: 1,
+                color: 'rgba(215,25,28,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'T31':
+                    return {
+                pane: 'pane_CLASIFPORTRFICO_39',
+                opacity: 1,
+                color: 'rgba(254,201,128,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'T41':
+                    return {
+                pane: 'pane_CLASIFPORTRFICO_39',
+                opacity: 1,
+                color: 'rgba(199,232,173,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'T42':
+                    return {
+                pane: 'pane_CLASIFPORTRFICO_39',
+                opacity: 1,
+                color: 'rgba(43,131,186,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_CLASIFPORTRFICO_39');
+        map.getPane('pane_CLASIFPORTRFICO_39').style.zIndex = 439;
+        map.getPane('pane_CLASIFPORTRFICO_39').style['mix-blend-mode'] = 'normal';
+        var layer_CLASIFPORTRFICO_39 = new L.geoJson(json_CLASIFPORTRFICO_39, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CLASIFPORTRFICO_39',
+            layerName: 'layer_CLASIFPORTRFICO_39',
+            pane: 'pane_CLASIFPORTRFICO_39',
+            onEachFeature: pop_CLASIFPORTRFICO_39,
+            style: style_CLASIFPORTRFICO_39_0,
+        });
+        bounds_group.addLayer(layer_CLASIFPORTRFICO_39);
+        function pop_AFOROS_40(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">MATRICULA</th>\
+                        <td class="visible-with-data" id="DPH_trafico_MATRICULA">' + (feature.properties['DPH_trafico_MATRICULA'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PK</th>\
+                        <td class="visible-with-data" id="DPH_trafico_PK">' + (feature.properties['DPH_trafico_PK'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_PK']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO AFORO</th>\
+                        <td class="visible-with-data" id="DPH_trafico_TIPO AFORO">' + (feature.properties['DPH_trafico_TIPO AFORO'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_TIPO AFORO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">AÑO OBTENCION</th>\
+                        <td class="visible-with-data" id="DPH_trafico_A�O">' + (feature.properties['DPH_trafico_A�O'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_A�O']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">IMD</th>\
+                        <td class="visible-with-data" id="DPH_trafico_IMD">' + (feature.properties['DPH_trafico_IMD'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_IMD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">IMDp</th>\
+                        <td class="visible-with-data" id="DPH_trafico_IMDp">' + (feature.properties['DPH_trafico_IMDp'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_IMDp']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">%PES</th>\
+                        <td class="visible-with-data" id="DPH_trafico_%PES">' + (feature.properties['DPH_trafico_%PES'] !== null ? autolinker.link(String(feature.properties['DPH_trafico_%PES']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_AFOROS_40_0() {
+            return {
+                pane: 'pane_AFOROS_40',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_AFOROS_40');
+        map.getPane('pane_AFOROS_40').style.zIndex = 440;
+        map.getPane('pane_AFOROS_40').style['mix-blend-mode'] = 'normal';
+        var layer_AFOROS_40 = new L.geoJson(json_AFOROS_40, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AFOROS_40',
+            layerName: 'layer_AFOROS_40',
+            pane: 'pane_AFOROS_40',
+            onEachFeature: pop_AFOROS_40,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_AFOROS_40_0(feature));
+            },
+        });
+        var cluster_AFOROS_40 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_AFOROS_40.addLayer(layer_AFOROS_40);
+
+        bounds_group.addLayer(layer_AFOROS_40);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var overlaysTree = [
+        {label: '<b>RED PROV CARRETERAS Y CAMINOS</b>',  selectAllCheckbox: true, children: [
+            {label: '<img src="legend/AFOROS_40.png" /> AFOROS', layer: cluster_AFOROS_40},
+            {label: 'CLASIF POR TRÁFICO<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_39_T20.png" /></td><td>T2</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_39_T311.png" /></td><td>T31</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_39_T412.png" /></td><td>T41</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_39_T423.png" /></td><td>T42</td></tr></table>', layer: layer_CLASIFPORTRFICO_39},
+            {label: 'CLASIF ANCHURA (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_38_50.png" /></td><td><5</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_38_71.png" /></td><td>>7</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_38_572.png" /></td><td>5-7</td></tr></table>', layer: layer_CLASIFANCHURAanuario2024_38},
+            {label: 'CLASIF PAVIMENTO (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_37_A0.png" /></td><td>A</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_37_R1.png" /></td><td>R</td></tr></table>', layer: layer_CLASIFPAVIMENTOanuario2024_37},
+            {label: '<img src="legend/REDPROVCARRETERAS_36.png" /> RED PROV CARRETERAS', layer: layer_REDPROVCARRETERAS_36},
+            {label: '<img src="legend/intersecciones_35.png" /> (intersecciones)', layer: layer_intersecciones_35},
+            {label: '<img src="legend/LIMITACIONES_34.png" /> LIMITACIONES', layer: layer_LIMITACIONES_34},
+            {label: '<img src="legend/REDPROVCAMINOS_33.png" /> RED PROV CAMINOS', layer: layer_REDPROVCAMINOS_33},
+            {label: 'ZONAS CONSERVACION CARRETERAS Y CAMINOS<br /><table><tr><td style="text-align: center;"><img src="legend/ZONASCONSERVACIONCARRETERASYCAMINOS_32_NORTE0.png" /></td><td>NORTE</td></tr><tr><td style="text-align: center;"><img src="legend/ZONASCONSERVACIONCARRETERASYCAMINOS_32_SUR1.png" /></td><td>SUR</td></tr></table>', layer: layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32},]},
+        {label: '<b>OTRAS REDES</b>',  selectAllCheckbox: true, children: [
+            {label: '<img src="legend/REDAUTONOMICA_31.png" /> RED AUTONOMICA', layer: layer_REDAUTONOMICA_31},
+            {label: '<img src="legend/REDESTATAL_30.png" /> RED ESTATAL', layer: layer_REDESTATAL_30},
+            {label: '<img src="legend/REDESTATALAUTOVIAS_29.png" /> RED ESTATAL (AUTOVIAS)', layer: layer_REDESTATALAUTOVIAS_29},]},
+        {label: '<b>LIMITES ADMINISTRATIVOS</b>', collapsed: true, selectAllCheckbox: true, children: [
+            {label: '<img src="legend/NUCLEOSURBANOS_28.png" /> NUCLEOS URBANOS', layer: layer_NUCLEOSURBANOS_28},
+            {label: '<img src="legend/PROVINCIA_27.png" /> PROVINCIA', layer: layer_PROVINCIA_27},
+            {label: '<img src="legend/TRMINOSMUNICIPALES_26.png" /> TÉRMINOS MUNICIPALES', layer: layer_TRMINOSMUNICIPALES_26},]},
+        {label: '<b>WMS Base Cartográfica Andalucía</b>', collapsed: true, selectAllCheckbox: true, children: [
+            {label: "01 Cartografía Base Cartográfica de Andalucía", layer: layer_01CartografaBaseCartogrficadeAndaluca_25},
+            {label: "02 Relieve", layer: layer_02Relieve_24},
+            {label: "03 Red Hidrográfica", layer: layer_03RedHidrogrfica_23},
+            {label: "04 Cubierta Terrestre", layer: layer_04CubiertaTerrestre_22},
+            {label: "05 Red Viaria", layer: layer_05RedViaria_21},
+            {label: "06 Sistema Urbano", layer: layer_06SistemaUrbano_20},
+            {label: "07 Servicios", layer: layer_07Servicios_19},
+            {label: "08 Infraestructuras de Transportes", layer: layer_08InfraestructurasdeTransportes_18},
+            {label: "09 Infraestructuras Energéticas y de Telecomunicaciones", layer: layer_09InfraestructurasEnergticasydeTelecomunicaciones_17},
+            {label: "10 Infraestructuras Hidraúlicas", layer: layer_10InfraestructurasHidralicas_16},
+            {label: "11 Infraestructuras Medio Ambientales", layer: layer_11InfraestructurasMedioAmbientales_15},
+            {label: "12 Infraestructuras Geográficas", layer: layer_12InfraestructurasGeogrficas_14},]},
+        {label: '<b>WMS Hidrografía</b>', collapsed: true, selectAllCheckbox: true, children: [
+            {label: "Humedales", layer: layer_Humedales_13},
+            {label: "Masas de agua", layer: layer_Masasdeagua_12},
+            {label: "Red hidrográfica", layer: layer_Redhidrogrfica_11},
+            {label: "Límite tierra-agua", layer: layer_Lmitetierraagua_10},]},
+        {label: '<b>WMS VVPP /  EENNPP / Catastro</b>', collapsed: true, selectAllCheckbox: true, children: [
+            {label: "REDIAM. WMS Inventario de Vías Pecuarias, lugares asociados y líneas bases de VVPP deslindadas con anchura necesaria     ", layer: layer_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9},
+            {label: "REDIAM. WMS Espacios Naturales Protegidos de Andalucía (EENNPP)   ", layer: layer_REDIAMWMSEspaciosNaturalesProtegidosdeAndalucaEENNPP_8},
+            {label: "Catastro", layer: layer_Catastro_7},]},
+        {label: '<b>WMS IGN</b>', collapsed: true, selectAllCheckbox: true, children: [
+            {label: "PNOA 2022", layer: layer_PNOA2022_6},
+            {label: "Interministerial (1973-1986)", layer: layer_Interministerial19731986_5},
+            {label: "Americano (Serie B, 1956-1957)", layer: layer_AmericanoSerieB19561957_4},
+            {label: "Nacional (1981-1986)", layer: layer_Nacional19811986_3},
+            {label: "Fondo/Mapas raster del IGN", layer: layer_FondoMapasrasterdelIGN_2},]},
+        {label: '<b>WMS_base</b>', collapsed: true, selectAllCheckbox: true, children: [
+            {label: "Google Satellite", layer: layer_GoogleSatellite_1},
+            {label: "OSM Standard", layer: layer_OSMStandard_0},]},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: true,
+        });
+        lay.addTo(map);
+        map.on("zoomend", function(){
+
+                if (map.hasLayer(layer_REDESTATALAUTOVIAS_29)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDESTATALAUTOVIAS_29.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDESTATALAUTOVIAS_29.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_REDESTATAL_30)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDESTATAL_30.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDESTATAL_30.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_REDAUTONOMICA_31)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDAUTONOMICA_31.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDAUTONOMICA_31.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_REDPROVCAMINOS_33)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDPROVCAMINOS_33.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDPROVCAMINOS_33.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_REDPROVCARRETERAS_36)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDPROVCARRETERAS_36.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDPROVCARRETERAS_36.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        });
+        setBounds();
+        var i = 0;
+        layer_REDESTATALAUTOVIAS_29.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['MATRICULA'] !== null?String('<div style="color: #000000; font-size: 5pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['MATRICULA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_REDESTATALAUTOVIAS_29'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_REDESTATAL_30.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['MATRICULA'] !== null?String('<div style="color: #000000; font-size: 5pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['MATRICULA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_REDESTATAL_30'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_REDAUTONOMICA_31.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['MATRICULA'] !== null?String('<div style="color: #000000; font-size: 5pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['MATRICULA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_REDAUTONOMICA_31'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_REDPROVCAMINOS_33.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['MATRICULA'] !== null?String('<div style="color: #ffffff; font-size: 5pt; font-family: \'Ccrige\', sans-serif;">' + layer.feature.properties['MATRICULA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_REDPROVCAMINOS_33'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_REDPROVCARRETERAS_36.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['MATRICULA'] !== null?String('<div style="color: #000000; font-size: 6pt; font-family: \'Ccrige\', sans-serif;">' + layer.feature.properties['MATRICULA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_REDPROVCARRETERAS_36'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+                if (map.hasLayer(layer_REDESTATALAUTOVIAS_29)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDESTATALAUTOVIAS_29.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDESTATALAUTOVIAS_29.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_REDESTATAL_30)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDESTATAL_30.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDESTATAL_30.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_REDAUTONOMICA_31)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDAUTONOMICA_31.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDAUTONOMICA_31.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_REDPROVCAMINOS_33)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDPROVCAMINOS_33.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDPROVCAMINOS_33.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_REDPROVCARRETERAS_36)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
+                        layer_REDPROVCARRETERAS_36.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_REDPROVCARRETERAS_36.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        map.addControl(new L.Control.Search({
+            layer: cluster_REDPROVCARRETERAS_36,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'MATRICULA'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36]);
+        map.on("zoomend", function(){
+            resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36]);
+        });
+        </script>
+    </body>
+</html>
