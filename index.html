@@ -57,14 +57,16 @@
         <script src="data/LIMITACIONES_34.js"></script>
         <script src="data/intersecciones_35.js"></script>
         <script src="data/REDPROVCARRETERAS_36.js"></script>
-        <script src="data/CLASIFPAVIMENTOanuario2024_37.js"></script>
-        <script src="data/CLASIFANCHURAanuario2024_38.js"></script>
-        <script src="data/CLASIFPORTRFICO_39.js"></script>
-        <script src="data/AFOROS_40.js"></script>
+        <script src="data/PPKK100_37.js"></script>
+        <script src="data/PPKK1000_38.js"></script>
+        <script src="data/CLASIFPAVIMENTOanuario2024_39.js"></script>
+        <script src="data/CLASIFANCHURAanuario2024_40.js"></script>
+        <script src="data/CLASIFPORTRFICO_41.js"></script>
+        <script src="data/AFOROS_42.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[37.36217200115444,-6.793729427048954],[37.419332754984296,-6.667907832755198]]);
+        }).fitBounds([[36.6114629714271,-8.654920258145255],[38.670799027868476,-4.342846519254222]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -243,10 +245,10 @@
             opacity: 1,
             attribution: '',
         });
-        map.createPane('pane_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9');
-        map.getPane('pane_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9').style.zIndex = 409;
-        var layer_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9 = L.WMS.layer("https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_Inventario_VVPP", "REDIAM", {
-            pane: 'pane_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9',
+        map.createPane('pane_REDIAMWMSInventariodeVasPecuarias_9');
+        map.getPane('pane_REDIAMWMSInventariodeVasPecuarias_9').style.zIndex = 409;
+        var layer_REDIAMWMSInventariodeVasPecuarias_9 = L.WMS.layer("https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_Inventario_VVPP", "REDIAM", {
+            pane: 'pane_REDIAMWMSInventariodeVasPecuarias_9',
             format: 'image/png',
             uppercase: true,
             transparent: true,
@@ -976,31 +978,31 @@
         function pop_REDPROVCARRETERAS_36(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <th scope="row">DPH_titularidad_MATRICULA</th>\
+                        <th scope="row">MATRICULA</th>\
                         <td class="visible-with-data" id="DPH_titularidad_MATRICULA">' + (feature.properties['DPH_titularidad_MATRICULA'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">DPH_titularidad_INI</th>\
+                        <th scope="row">INI</th>\
                         <td class="visible-with-data" id="DPH_titularidad_INI">' + (feature.properties['DPH_titularidad_INI'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_INI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">DPH_titularidad_FIN</th>\
+                        <th scope="row">FIN</th>\
                         <td class="visible-with-data" id="DPH_titularidad_FIN">' + (feature.properties['DPH_titularidad_FIN'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_FIN']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">DPH_titularidad_L_tramo</th>\
+                        <th scope="row">L TRAMO</th>\
                         <td class="visible-with-data" id="DPH_titularidad_L_tramo">' + (feature.properties['DPH_titularidad_L_tramo'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_L_tramo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">DPH_titularidad_TITULARIDAD</th>\
+                        <th scope="row">TITULARIDAD</th>\
                         <td class="visible-with-data" id="DPH_titularidad_TITULARIDAD">' + (feature.properties['DPH_titularidad_TITULARIDAD'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_TITULARIDAD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">RED_PROV_CARRETERAS_base_ZONA CONS</th>\
+                        <th scope="row">ZONA CONS</th>\
                         <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_ZONA CONS">' + (feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">RED_PROV_CARRETERAS_base_DENOM</th>\
+                        <th scope="row">DENOMINACIÓN</th>\
                         <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_DENOM">' + (feature.properties['RED_PROV_CARRETERAS_base_DENOM'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_DENOM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
@@ -1050,7 +1052,103 @@
         });
         bounds_group.addLayer(layer_REDPROVCARRETERAS_36);
         map.addLayer(layer_REDPROVCARRETERAS_36);
-        function pop_CLASIFPAVIMENTOanuario2024_37(feature, layer) {
+        function pop_PPKK100_37(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">MATRICULA</th>\
+                        <td class="visible-with-data" id="MATRICULA">' + (feature.properties['MATRICULA'] !== null ? autolinker.link(String(feature.properties['MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PK</th>\
+                        <td class="visible-with-data" id="PK">' + (feature.properties['PK'] !== null ? autolinker.link(String(feature.properties['PK']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PPKK100_37_0() {
+            return {
+                pane: 'pane_PPKK100_37',
+                radius: 4.0,
+                stroke: false,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(191,191,191,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_PPKK100_37');
+        map.getPane('pane_PPKK100_37').style.zIndex = 437;
+        map.getPane('pane_PPKK100_37').style['mix-blend-mode'] = 'normal';
+        var layer_PPKK100_37 = new L.geoJson(json_PPKK100_37, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PPKK100_37',
+            layerName: 'layer_PPKK100_37',
+            pane: 'pane_PPKK100_37',
+            onEachFeature: pop_PPKK100_37,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_PPKK100_37_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_PPKK100_37);
+        function pop_PPKK1000_38(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">MATRICULA</th>\
+                        <td class="visible-with-data" id="MATRICULA">' + (feature.properties['MATRICULA'] !== null ? autolinker.link(String(feature.properties['MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PK</th>\
+                        <td class="visible-with-data" id="PK">' + (feature.properties['PK'] !== null ? autolinker.link(String(feature.properties['PK']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PPKK1000_38_0() {
+            return {
+                pane: 'pane_PPKK1000_38',
+                radius: 4.0,
+                stroke: false,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_PPKK1000_38');
+        map.getPane('pane_PPKK1000_38').style.zIndex = 438;
+        map.getPane('pane_PPKK1000_38').style['mix-blend-mode'] = 'normal';
+        var layer_PPKK1000_38 = new L.geoJson(json_PPKK1000_38, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PPKK1000_38',
+            layerName: 'layer_PPKK1000_38',
+            pane: 'pane_PPKK1000_38',
+            onEachFeature: pop_PPKK1000_38,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_PPKK1000_38_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_PPKK1000_38);
+        function pop_CLASIFPAVIMENTOanuario2024_39(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">DPH_tipopavimento_MATRICULA</th>\
@@ -1080,11 +1178,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_CLASIFPAVIMENTOanuario2024_37_0(feature) {
+        function style_CLASIFPAVIMENTOanuario2024_39_0(feature) {
             switch(String(feature.properties['DPH_tipopavimento_PAVIMENTO'])) {
                 case 'A':
                     return {
-                pane: 'pane_CLASIFPAVIMENTOanuario2024_37',
+                pane: 'pane_CLASIFPAVIMENTOanuario2024_39',
                 opacity: 1,
                 color: 'rgba(77,77,77,1.0)',
                 dashArray: '',
@@ -1097,7 +1195,7 @@
                     break;
                 case 'R':
                     return {
-                pane: 'pane_CLASIFPAVIMENTOanuario2024_37',
+                pane: 'pane_CLASIFPAVIMENTOanuario2024_39',
                 opacity: 1,
                 color: 'rgba(204,204,204,1.0)',
                 dashArray: '',
@@ -1110,20 +1208,20 @@
                     break;
             }
         }
-        map.createPane('pane_CLASIFPAVIMENTOanuario2024_37');
-        map.getPane('pane_CLASIFPAVIMENTOanuario2024_37').style.zIndex = 437;
-        map.getPane('pane_CLASIFPAVIMENTOanuario2024_37').style['mix-blend-mode'] = 'normal';
-        var layer_CLASIFPAVIMENTOanuario2024_37 = new L.geoJson(json_CLASIFPAVIMENTOanuario2024_37, {
+        map.createPane('pane_CLASIFPAVIMENTOanuario2024_39');
+        map.getPane('pane_CLASIFPAVIMENTOanuario2024_39').style.zIndex = 439;
+        map.getPane('pane_CLASIFPAVIMENTOanuario2024_39').style['mix-blend-mode'] = 'normal';
+        var layer_CLASIFPAVIMENTOanuario2024_39 = new L.geoJson(json_CLASIFPAVIMENTOanuario2024_39, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_CLASIFPAVIMENTOanuario2024_37',
-            layerName: 'layer_CLASIFPAVIMENTOanuario2024_37',
-            pane: 'pane_CLASIFPAVIMENTOanuario2024_37',
-            onEachFeature: pop_CLASIFPAVIMENTOanuario2024_37,
-            style: style_CLASIFPAVIMENTOanuario2024_37_0,
+            dataVar: 'json_CLASIFPAVIMENTOanuario2024_39',
+            layerName: 'layer_CLASIFPAVIMENTOanuario2024_39',
+            pane: 'pane_CLASIFPAVIMENTOanuario2024_39',
+            onEachFeature: pop_CLASIFPAVIMENTOanuario2024_39,
+            style: style_CLASIFPAVIMENTOanuario2024_39_0,
         });
-        bounds_group.addLayer(layer_CLASIFPAVIMENTOanuario2024_37);
-        function pop_CLASIFANCHURAanuario2024_38(feature, layer) {
+        bounds_group.addLayer(layer_CLASIFPAVIMENTOanuario2024_39);
+        function pop_CLASIFANCHURAanuario2024_40(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">DPH_tipoanchura_MATRICULA</th>\
@@ -1153,11 +1251,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_CLASIFANCHURAanuario2024_38_0(feature) {
+        function style_CLASIFANCHURAanuario2024_40_0(feature) {
             switch(String(feature.properties['DPH_tipoanchura_ANCHO'])) {
                 case '<5':
                     return {
-                pane: 'pane_CLASIFANCHURAanuario2024_38',
+                pane: 'pane_CLASIFANCHURAanuario2024_40',
                 opacity: 1,
                 color: 'rgba(156,205,255,1.0)',
                 dashArray: '',
@@ -1170,7 +1268,7 @@
                     break;
                 case '>7':
                     return {
-                pane: 'pane_CLASIFANCHURAanuario2024_38',
+                pane: 'pane_CLASIFANCHURAanuario2024_40',
                 opacity: 1,
                 color: 'rgba(82,127,181,1.0)',
                 dashArray: '',
@@ -1183,7 +1281,7 @@
                     break;
                 case '5-7':
                     return {
-                pane: 'pane_CLASIFANCHURAanuario2024_38',
+                pane: 'pane_CLASIFANCHURAanuario2024_40',
                 opacity: 1,
                 color: 'rgba(8,48,107,1.0)',
                 dashArray: '',
@@ -1196,20 +1294,20 @@
                     break;
             }
         }
-        map.createPane('pane_CLASIFANCHURAanuario2024_38');
-        map.getPane('pane_CLASIFANCHURAanuario2024_38').style.zIndex = 438;
-        map.getPane('pane_CLASIFANCHURAanuario2024_38').style['mix-blend-mode'] = 'normal';
-        var layer_CLASIFANCHURAanuario2024_38 = new L.geoJson(json_CLASIFANCHURAanuario2024_38, {
+        map.createPane('pane_CLASIFANCHURAanuario2024_40');
+        map.getPane('pane_CLASIFANCHURAanuario2024_40').style.zIndex = 440;
+        map.getPane('pane_CLASIFANCHURAanuario2024_40').style['mix-blend-mode'] = 'normal';
+        var layer_CLASIFANCHURAanuario2024_40 = new L.geoJson(json_CLASIFANCHURAanuario2024_40, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_CLASIFANCHURAanuario2024_38',
-            layerName: 'layer_CLASIFANCHURAanuario2024_38',
-            pane: 'pane_CLASIFANCHURAanuario2024_38',
-            onEachFeature: pop_CLASIFANCHURAanuario2024_38,
-            style: style_CLASIFANCHURAanuario2024_38_0,
+            dataVar: 'json_CLASIFANCHURAanuario2024_40',
+            layerName: 'layer_CLASIFANCHURAanuario2024_40',
+            pane: 'pane_CLASIFANCHURAanuario2024_40',
+            onEachFeature: pop_CLASIFANCHURAanuario2024_40,
+            style: style_CLASIFANCHURAanuario2024_40_0,
         });
-        bounds_group.addLayer(layer_CLASIFANCHURAanuario2024_38);
-        function pop_CLASIFPORTRFICO_39(feature, layer) {
+        bounds_group.addLayer(layer_CLASIFANCHURAanuario2024_40);
+        function pop_CLASIFPORTRFICO_41(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">DPH_trafico_MATRICULA</th>\
@@ -1255,11 +1353,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_CLASIFPORTRFICO_39_0(feature) {
+        function style_CLASIFPORTRFICO_41_0(feature) {
             switch(String(feature.properties['DPH_trafico_CAT TRAF PESADO'])) {
                 case 'T2':
                     return {
-                pane: 'pane_CLASIFPORTRFICO_39',
+                pane: 'pane_CLASIFPORTRFICO_41',
                 opacity: 1,
                 color: 'rgba(215,25,28,1.0)',
                 dashArray: '',
@@ -1272,7 +1370,7 @@
                     break;
                 case 'T31':
                     return {
-                pane: 'pane_CLASIFPORTRFICO_39',
+                pane: 'pane_CLASIFPORTRFICO_41',
                 opacity: 1,
                 color: 'rgba(254,201,128,1.0)',
                 dashArray: '',
@@ -1285,7 +1383,7 @@
                     break;
                 case 'T41':
                     return {
-                pane: 'pane_CLASIFPORTRFICO_39',
+                pane: 'pane_CLASIFPORTRFICO_41',
                 opacity: 1,
                 color: 'rgba(199,232,173,1.0)',
                 dashArray: '',
@@ -1298,7 +1396,7 @@
                     break;
                 case 'T42':
                     return {
-                pane: 'pane_CLASIFPORTRFICO_39',
+                pane: 'pane_CLASIFPORTRFICO_41',
                 opacity: 1,
                 color: 'rgba(43,131,186,1.0)',
                 dashArray: '',
@@ -1311,20 +1409,20 @@
                     break;
             }
         }
-        map.createPane('pane_CLASIFPORTRFICO_39');
-        map.getPane('pane_CLASIFPORTRFICO_39').style.zIndex = 439;
-        map.getPane('pane_CLASIFPORTRFICO_39').style['mix-blend-mode'] = 'normal';
-        var layer_CLASIFPORTRFICO_39 = new L.geoJson(json_CLASIFPORTRFICO_39, {
+        map.createPane('pane_CLASIFPORTRFICO_41');
+        map.getPane('pane_CLASIFPORTRFICO_41').style.zIndex = 441;
+        map.getPane('pane_CLASIFPORTRFICO_41').style['mix-blend-mode'] = 'normal';
+        var layer_CLASIFPORTRFICO_41 = new L.geoJson(json_CLASIFPORTRFICO_41, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_CLASIFPORTRFICO_39',
-            layerName: 'layer_CLASIFPORTRFICO_39',
-            pane: 'pane_CLASIFPORTRFICO_39',
-            onEachFeature: pop_CLASIFPORTRFICO_39,
-            style: style_CLASIFPORTRFICO_39_0,
+            dataVar: 'json_CLASIFPORTRFICO_41',
+            layerName: 'layer_CLASIFPORTRFICO_41',
+            pane: 'pane_CLASIFPORTRFICO_41',
+            onEachFeature: pop_CLASIFPORTRFICO_41,
+            style: style_CLASIFPORTRFICO_41_0,
         });
-        bounds_group.addLayer(layer_CLASIFPORTRFICO_39);
-        function pop_AFOROS_40(feature, layer) {
+        bounds_group.addLayer(layer_CLASIFPORTRFICO_41);
+        function pop_AFOROS_42(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">MATRICULA</th>\
@@ -1362,9 +1460,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_AFOROS_40_0() {
+        function style_AFOROS_42_0() {
             return {
-                pane: 'pane_AFOROS_40',
+                pane: 'pane_AFOROS_42',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -1378,29 +1476,29 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_AFOROS_40');
-        map.getPane('pane_AFOROS_40').style.zIndex = 440;
-        map.getPane('pane_AFOROS_40').style['mix-blend-mode'] = 'normal';
-        var layer_AFOROS_40 = new L.geoJson(json_AFOROS_40, {
+        map.createPane('pane_AFOROS_42');
+        map.getPane('pane_AFOROS_42').style.zIndex = 442;
+        map.getPane('pane_AFOROS_42').style['mix-blend-mode'] = 'normal';
+        var layer_AFOROS_42 = new L.geoJson(json_AFOROS_42, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_AFOROS_40',
-            layerName: 'layer_AFOROS_40',
-            pane: 'pane_AFOROS_40',
-            onEachFeature: pop_AFOROS_40,
+            dataVar: 'json_AFOROS_42',
+            layerName: 'layer_AFOROS_42',
+            pane: 'pane_AFOROS_42',
+            onEachFeature: pop_AFOROS_42,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_AFOROS_40_0(feature));
+                return L.circleMarker(latlng, style_AFOROS_42_0(feature));
             },
         });
-        var cluster_AFOROS_40 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+        var cluster_AFOROS_42 = new L.MarkerClusterGroup({showCoverageOnHover: false,
             spiderfyDistanceMultiplier: 2});
-        cluster_AFOROS_40.addLayer(layer_AFOROS_40);
+        cluster_AFOROS_42.addLayer(layer_AFOROS_42);
 
-        bounds_group.addLayer(layer_AFOROS_40);
+        bounds_group.addLayer(layer_AFOROS_42);
         var osmGeocoder = new L.Control.Geocoder({
             collapsed: true,
             position: 'topleft',
@@ -1413,16 +1511,18 @@
         .title += 'Search for a place';
         var overlaysTree = [
         {label: '<b>RED PROV CARRETERAS Y CAMINOS</b>',  selectAllCheckbox: true, children: [
-            {label: '<img src="legend/AFOROS_40.png" /> AFOROS', layer: cluster_AFOROS_40},
-            {label: 'CLASIF POR TRÁFICO<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_39_T20.png" /></td><td>T2</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_39_T311.png" /></td><td>T31</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_39_T412.png" /></td><td>T41</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_39_T423.png" /></td><td>T42</td></tr></table>', layer: layer_CLASIFPORTRFICO_39},
-            {label: 'CLASIF ANCHURA (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_38_50.png" /></td><td><5</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_38_71.png" /></td><td>>7</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_38_572.png" /></td><td>5-7</td></tr></table>', layer: layer_CLASIFANCHURAanuario2024_38},
-            {label: 'CLASIF PAVIMENTO (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_37_A0.png" /></td><td>A</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_37_R1.png" /></td><td>R</td></tr></table>', layer: layer_CLASIFPAVIMENTOanuario2024_37},
+            {label: '<img src="legend/AFOROS_42.png" /> AFOROS', layer: cluster_AFOROS_42},
+            {label: 'CLASIF POR TRÁFICO<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_41_T20.png" /></td><td>T2</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_41_T311.png" /></td><td>T31</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_41_T412.png" /></td><td>T41</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_41_T423.png" /></td><td>T42</td></tr></table>', layer: layer_CLASIFPORTRFICO_41},
+            {label: 'CLASIF ANCHURA (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_40_50.png" /></td><td><5</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_40_71.png" /></td><td>>7</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_40_572.png" /></td><td>5-7</td></tr></table>', layer: layer_CLASIFANCHURAanuario2024_40},
+            {label: 'CLASIF PAVIMENTO (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_39_A0.png" /></td><td>A</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_39_R1.png" /></td><td>R</td></tr></table>', layer: layer_CLASIFPAVIMENTOanuario2024_39},
+            {label: '<img src="legend/PPKK1000_38.png" /> PPKK:1000', layer: layer_PPKK1000_38},
+            {label: '<img src="legend/PPKK100_37.png" /> PPKK:100', layer: layer_PPKK100_37},
             {label: '<img src="legend/REDPROVCARRETERAS_36.png" /> RED PROV CARRETERAS', layer: layer_REDPROVCARRETERAS_36},
             {label: '<img src="legend/intersecciones_35.png" /> (intersecciones)', layer: layer_intersecciones_35},
             {label: '<img src="legend/LIMITACIONES_34.png" /> LIMITACIONES', layer: layer_LIMITACIONES_34},
             {label: '<img src="legend/REDPROVCAMINOS_33.png" /> RED PROV CAMINOS', layer: layer_REDPROVCAMINOS_33},
             {label: 'ZONAS CONSERVACION CARRETERAS Y CAMINOS<br /><table><tr><td style="text-align: center;"><img src="legend/ZONASCONSERVACIONCARRETERASYCAMINOS_32_NORTE0.png" /></td><td>NORTE</td></tr><tr><td style="text-align: center;"><img src="legend/ZONASCONSERVACIONCARRETERASYCAMINOS_32_SUR1.png" /></td><td>SUR</td></tr></table>', layer: layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32},]},
-        {label: '<b>OTRAS REDES</b>',  selectAllCheckbox: true, children: [
+        {label: '<b>OTRAS REDES</b>', collapsed: true, selectAllCheckbox: true, children: [
             {label: '<img src="legend/REDAUTONOMICA_31.png" /> RED AUTONOMICA', layer: layer_REDAUTONOMICA_31},
             {label: '<img src="legend/REDESTATAL_30.png" /> RED ESTATAL', layer: layer_REDESTATAL_30},
             {label: '<img src="legend/REDESTATALAUTOVIAS_29.png" /> RED ESTATAL (AUTOVIAS)', layer: layer_REDESTATALAUTOVIAS_29},]},
@@ -1449,7 +1549,7 @@
             {label: "Red hidrográfica", layer: layer_Redhidrogrfica_11},
             {label: "Límite tierra-agua", layer: layer_Lmitetierraagua_10},]},
         {label: '<b>WMS VVPP /  EENNPP / Catastro</b>', collapsed: true, selectAllCheckbox: true, children: [
-            {label: "REDIAM. WMS Inventario de Vías Pecuarias, lugares asociados y líneas bases de VVPP deslindadas con anchura necesaria     ", layer: layer_REDIAMWMSInventariodeVasPecuariaslugaresasociadosylneasbasesdeVVPPdeslindadasconanchuranecesaria_9},
+            {label: "REDIAM. WMS Inventario de Vías Pecuarias", layer: layer_REDIAMWMSInventariodeVasPecuarias_9},
             {label: "REDIAM. WMS Espacios Naturales Protegidos de Andalucía (EENNPP)   ", layer: layer_REDIAMWMSEspaciosNaturalesProtegidosdeAndalucaEENNPP_8},
             {label: "Catastro", layer: layer_Catastro_7},]},
         {label: '<b>WMS IGN</b>', collapsed: true, selectAllCheckbox: true, children: [
@@ -1595,6 +1695,32 @@
               addLabel(layer, i);
               i++;
         });
+        var i = 0;
+        layer_PPKK100_37.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['PK'] !== null?String('<div style="color: #000000; font-size: 7pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['PK']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_PPKK100_37'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_PPKK1000_38.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['PK'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['PK']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_PPKK1000_38'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
                 if (map.hasLayer(layer_REDESTATALAUTOVIAS_29)) {
                     if (map.getZoom() <= 10 && map.getZoom() >= 19) {
                         layer_REDESTATALAUTOVIAS_29.eachLayer(function (layer) {
@@ -1657,15 +1783,15 @@
             propertyName: 'MATRICULA'}));
         document.getElementsByClassName('search-button')[0].className +=
          ' fa fa-binoculars';
-        resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36]);
+        resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36,layer_PPKK100_37,layer_PPKK1000_38]);
         map.on("zoomend", function(){
-            resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36]);
+            resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36,layer_PPKK100_37,layer_PPKK1000_38]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36]);
+            resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36,layer_PPKK100_37,layer_PPKK1000_38]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36]);
+            resetLabels([layer_TRMINOSMUNICIPALES_26,layer_REDESTATALAUTOVIAS_29,layer_REDESTATAL_30,layer_REDAUTONOMICA_31,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_32,layer_REDPROVCAMINOS_33,layer_REDPROVCARRETERAS_36,layer_PPKK100_37,layer_PPKK1000_38]);
         });
         </script>
     </body>
