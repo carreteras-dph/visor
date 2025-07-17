@@ -1,9 +1,9 @@
 	
 	@font-face {
 	    font-family: 'Ccrige';
-	    src: url('../webfonts/Ccrige.woff2') format('woff2'),
-	         url('../webfonts/Ccrige.woff') format('woff'),
-	         url('../webfonts/Ccrige.ttf') format('truetype');
+	    src: url('webfonts/Ccrige.woff2') format('woff2'),
+	         url('webfonts/Ccrige.woff') format('woff'),
+	         url('webfonts/Ccrige.ttf') format('truetype');
 	    font-weight: normal;
 	    font-style: normal;
 	}
