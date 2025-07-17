@@ -1,9 +1,9 @@
-@font-face {
-    font-family: 'Ccrige';
-    src: url('../fonts/CCrige.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-}
+	@font-face {
+	    font-family: 'Ccrige';
+	    src: url('../fonts/CCrige.woff2') format('woff2');
+	    font-weight: normal;
+	    font-style: normal;
+	}
 
         #map {
             background-color: #ffffff
@@ -203,9 +203,9 @@
         .leaflet-control-layers-expanded .leaflet-control-layers-toggle {
             display: none;
         }
-.css_REDPROVCARRETERAS_26 {
-    font-family: 'Ccrige', sans-serif !important;
-    color: #000000 !important;
-    font-size: 12px !important;
-}
+	.css_REDPROVCARRETERAS_26 {
+	    font-family: 'Ccrige', sans-serif !important;
+	    color: #000000 !important;
+	    font-size: 12px !important;
+	}
         
