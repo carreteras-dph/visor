@@ -1,6 +1,6 @@
 	@font-face {
 	    font-family: 'Ccrige';
-	    src: url('../fonts/CCrige.woff2') format('woff2');
+	    src: url('../webfonts/Ccrige.woff2') format('woff2');
 	    font-weight: normal;
 	    font-style: normal;
 	}
@@ -204,7 +204,7 @@
             display: none;
         }
 	.css_REDPROVCARRETERAS_26 {
-	    font-family: 'Ccrige', sans-serif !important;
+	    font-family: 'ge', sans-serif !important;
 	    color: #000000 !important;
 	    font-size: 12px !important;
 	}
