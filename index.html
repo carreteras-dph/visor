@@ -1537,10 +1537,15 @@
                     }
                 }
                 if (map.hasLayer(layer_REDPROVCARRETERAS_26)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
                         layer_REDPROVCARRETERAS_26.eachLayer(function (layer) {
                             layer.openTooltip();
                         });
-                    } 
+                    } else {
+                        layer_REDPROVCARRETERAS_26.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
                 }
         });
         setBounds();
