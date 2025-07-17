@@ -1493,29 +1493,59 @@
         map.on("zoomend", function(){
 
                 if (map.hasLayer(layer_REDESTATALAUTOVIAS_19)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
                         layer_REDESTATALAUTOVIAS_19.eachLayer(function (layer) {
                             layer.openTooltip();
-                        })
+                        });
+                    } else {
+                        layer_REDESTATALAUTOVIAS_19.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
                 }
                 if (map.hasLayer(layer_REDESTATAL_20)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
                         layer_REDESTATAL_20.eachLayer(function (layer) {
                             layer.openTooltip();
-                        })
+                        });
+                    } else {
+                        layer_REDESTATAL_20.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
                 }
                 if (map.hasLayer(layer_REDAUTONOMICA_21)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
                         layer_REDAUTONOMICA_21.eachLayer(function (layer) {
                             layer.openTooltip();
-                        })
+                        });
+                    } else {
+                        layer_REDAUTONOMICA_21.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
                 }
                 if (map.hasLayer(layer_REDPROVCAMINOS_23)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
                         layer_REDPROVCAMINOS_23.eachLayer(function (layer) {
                             layer.openTooltip();
-                        })
+                        });
+                    } else {
+                        layer_REDPROVCAMINOS_23.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
                 }
                 if (map.hasLayer(layer_REDPROVCARRETERAS_26)) {
+                    if (map.getZoom() <= 10 && map.getZoom() >= 19) {
                         layer_REDPROVCARRETERAS_26.eachLayer(function (layer) {
                             layer.openTooltip();
-                        })
+                        });
+                    } else {
+                        layer_REDPROVCARRETERAS_26.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
                 }
         });
         setBounds();
