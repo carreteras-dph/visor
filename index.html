@@ -981,15 +981,9 @@
         bounds_group.addLayer(layer_PPKK100_27);
         function pop_PPKK1000_28(feature, layer) {
             var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
+                   <tr>\
                         <th scope="row">MATRICULA</th>\
                         <td class="visible-with-data" id="MATRICULA">' + (feature.properties['MATRICULA'] !== null ? autolinker.link(String(feature.properties['MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['distance'] !== null ? autolinker.link(String(feature.properties['distance']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">PK</th>\
@@ -1001,6 +995,7 @@
 				addClassToPopupIfMedia(content, e.popup);
 			});
 			layer.bindPopup(content, { maxHeight: 400 });
+		layer.openPopup();
         }
 
         function style_PPKK1000_28_0() {
