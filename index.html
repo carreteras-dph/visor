@@ -853,57 +853,42 @@
         bounds_group.addLayer(layer_intersecciones_25);
         map.addLayer(layer_intersecciones_25);
         function pop_REDPROVCARRETERAS_26(feature, layer) {
-    var popupContent = '<table>\
-            <tr>\
-                <th scope="row">MATRICULA</th>\
-                <td class="visible-with-data" id="DPH_titularidad_MATRICULA">' + (feature.properties['DPH_titularidad_MATRICULA'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-            </tr>\
-            <tr>\
-                <th scope="row">INI</th>\
-                <td class="visible-with-data" id="DPH_titularidad_INI">' + (feature.properties['DPH_titularidad_INI'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_INI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-            </tr>\
-            <tr>\
-                <th scope="row">FIN</th>\
-                <td class="visible-with-data" id="DPH_titularidad_FIN">' + (feature.properties['DPH_titularidad_FIN'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_FIN']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-            </tr>\
-            <tr>\
-                <th scope="row">L TRAMO</th>\
-                <td class="visible-with-data" id="DPH_titularidad_L_tramo">' + (feature.properties['DPH_titularidad_L_tramo'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_L_tramo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-            </tr>\
-            <tr>\
-                <th scope="row">TITULARIDAD</th>\
-                <td class="visible-with-data" id="DPH_titularidad_TITULARIDAD">' + (feature.properties['DPH_titularidad_TITULARIDAD'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_TITULARIDAD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-            </tr>\
-            <tr>\
-                <th scope="row">ZONA CONS</th>\
-                <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_ZONA CONS">' + (feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-            </tr>\
-            <tr>\
-                <th scope="row">DENOMINACIÓN</th>\
-                <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_DENOM">' + (feature.properties['RED_PROV_CARRETERAS_base_DENOM'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_DENOM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-            </tr>\
-        </table>';
-        
-    // Obtener el punto central de la geometría (válido para líneas/polígonos)
-    var lat, lon;
-    if (feature.geometry.type === 'Point') {
-        lat = feature.geometry.coordinates[1];
-        lon = feature.geometry.coordinates[0];
-    } else {
-        var centroid = turf.centroid(feature);
-        lat = centroid.geometry.coordinates[1];
-        lon = centroid.geometry.coordinates[0];
-    }
-
-    // Enlace a Street View
-    popupContent += '<br><a href="https://www.google.com/maps?q=&layer=c&cbll=' + lat + ',' + lon + '" target="_blank">Ver en Google Street View</a>';
-
-    var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-    layer.on('popupopen', function(e) {
-        addClassToPopupIfMedia(content, e.popup);
-    });
-    layer.bindPopup(content, { maxHeight: 400 });
-}
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">MATRICULA</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_MATRICULA">' + (feature.properties['DPH_titularidad_MATRICULA'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">INI</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_INI">' + (feature.properties['DPH_titularidad_INI'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_INI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FIN</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_FIN">' + (feature.properties['DPH_titularidad_FIN'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_FIN']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">L TRAMO</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_L_tramo">' + (feature.properties['DPH_titularidad_L_tramo'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_L_tramo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TITULARIDAD</th>\
+                        <td class="visible-with-data" id="DPH_titularidad_TITULARIDAD">' + (feature.properties['DPH_titularidad_TITULARIDAD'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_TITULARIDAD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ZONA CONS</th>\
+                        <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_ZONA CONS">' + (feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DENOMINACIÓN</th>\
+                        <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_DENOM">' + (feature.properties['RED_PROV_CARRETERAS_base_DENOM'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_DENOM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
 
         function style_REDPROVCARRETERAS_26_0() {
             return {
