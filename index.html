@@ -1740,7 +1740,21 @@
         }
         resetLabels([layer_TRMINOSMUNICIPALES_20,layer_REDESTATALAUTOVIAS_23,layer_REDESTATAL_24,layer_REDAUTONOMICA_25,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_26,layer_REDPROVCAMINOS_27,layer_REDPROVCARRETERAS_30,layer_PPKK100_31,layer_PPKK1000_32]);
         map.on("zoomend", function(){
-            resetLabels([layer_TRMINOSMUNICIPALES_20,layer_REDESTATALAUTOVIAS_23,layer_REDESTATAL_24,layer_REDAUTONOMICA_25,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_26,layer_REDPROVCAMINOS_27,layer_REDPROVCARRETERAS_30,layer_PPKK100_31,layer_PPKK1000_32]);
+            resetLabels([layer_TRMINOSMUNICIPALES_20,layer_REDESTATALAUTOVIAS_23,layer_REDESTATAL_24,layer_REDAUTONOMICA_25,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_26,layer_REDPROVCAMINOS_27,layer_REDPROVCARRETERAS_30,layer_PPKK100_31,layer_PPKK1000_32
+			]);
+		// Control de etiquetas para la Red Provincial de Carreteras
+	    if (map.hasLayer(layer_REDPROVCARRETERAS_30)) {
+	        if (map.getZoom() >= 10 && map.getZoom() <= 19) {
+	            layer_REDPROVCARRETERAS_30.eachLayer(function (layer) {
+	                layer.openTooltip();
+	            });
+	        } else {
+	            layer_REDPROVCARRETERAS_30.eachLayer(function (layer) {
+	                layer.closeTooltip();
+	            });
+	        }
+	    }
+		//fin
         });
         map.on("layeradd", function(){
             resetLabels([layer_TRMINOSMUNICIPALES_20,layer_REDESTATALAUTOVIAS_23,layer_REDESTATAL_24,layer_REDAUTONOMICA_25,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_26,layer_REDPROVCAMINOS_27,layer_REDPROVCARRETERAS_30,layer_PPKK100_31,layer_PPKK1000_32]);
