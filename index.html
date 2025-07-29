@@ -1662,7 +1662,12 @@
 
 		
 	layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
-	    		var context = {
+	    if (
+	        layer instanceof L.Polyline &&
+	        Array.isArray(layer._latlngs) &&
+	        layer._latlngs.length > 0
+    		) {	
+		var context = {
 	        feature: layer.feature,
 	        variables: {}
 	    };
@@ -1679,6 +1684,10 @@
 	    layer.added = true;
 	    addLabel(layer, i);
 	    i++;
+	    } else {
+        // Log para depuración de capas inválidas
+        console.warn("Capa polilínea sin geometría válida (no se procesa):", layer);
+    	}
 	});
 		
         var i = 0;
