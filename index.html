@@ -1660,7 +1660,8 @@
         //});
 
 	layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
-	    var context = {
+	    console.log(layer.feature.properties);
+		var context = {
 	        feature: layer.feature,
 	        variables: {}
 	    };
