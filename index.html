@@ -1646,18 +1646,37 @@
               i++;
         });
         var i = 0;
-        layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['DPH_titularidad_MATRICULA'] !== null?String('<div style="color: #000000; font-size: 8pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['DPH_titularidad_MATRICULA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_REDPROVCARRETERAS_30'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
+//        layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
+  //          var context = {
+    //            feature: layer.feature,
+      //          variables: {}
+        //    };
+          //  layer.bindTooltip((layer.feature.properties['DPH_titularidad_MATRICULA'] !== null?String('<div style="color: #000000; font-size: 8pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['DPH_titularidad_MATRICULA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_REDPROVCARRETERAS_30'});
+            //labels.push(layer);
+            //totalMarkers += 1;
+            //  layer.added = true;
+             // addLabel(layer, i);
+              //i++;
+        //});
+
+	layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
+	    var context = {
+	        feature: layer.feature,
+	        variables: {}
+	    };
+	    var matricula = layer.feature.properties['DPH_titularidad_MATRICULA'];
+	    if (typeof matricula === "string" && matricula.trim() !== "") {
+	        layer.bindTooltip(
+	            '<div style="color: #000000; font-size: 8pt; font-family: \'Arial\', sans-serif;">' + matricula + '</div>',
+	            {permanent: true, offset: [0, -16], className: 'css_REDPROVCARRETERAS_30'}
+	        );
+	    }
+	    labels.push(layer);
+	    totalMarkers += 1;
+	    layer.added = true;
+	    addLabel(layer, i);
+	    i++;
+	});
         var i = 0;
         layer_PPKK100_31.eachLayer(function(layer) {
             var context = {
