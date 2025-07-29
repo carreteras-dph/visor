@@ -1662,14 +1662,14 @@
 
 		
 	layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
-	    console.log(layer.feature.properties);
-		var context = {
+	    		var context = {
 	        feature: layer.feature,
 	        variables: {}
 	    };
 	    var matricula = layer.feature.properties['DPH_titularidad_MATRICULA'];
 	    if (typeof matricula === "string" && matricula.trim() !== "") {
-	        layer.bindTooltip(
+	        console.log("Revisando layer:", layer, layer.feature && layer.feature.properties);
+		    layer.bindTooltip(
 	            '<div style="color: #000000; font-size: 8pt; font-family: \'Arial\', sans-serif;">' + matricula + '</div>',
 	            {permanent: true, offset: [0, -16], className: 'css_REDPROVCARRETERAS_30'}
 	        );
