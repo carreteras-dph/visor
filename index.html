@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="css/MarkerCluster.css">
         <link rel="stylesheet" href="css/MarkerCluster.Default.css">
         <link rel="stylesheet" href="css/leaflet-search.css">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet-control-search/dist/leaflet-search.min.css" />
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
@@ -46,6 +47,7 @@
         <script src="js/leaflet-measure.js"></script>
         <script src="js/leaflet.markercluster.js"></script>
         <script src="js/leaflet-search.js"></script>
+	<script src="https://unpkg.com/leaflet-control-search/dist/leaflet-search.min.js"></script>
         <script src="data/TRMINOSMUNICIPALES_20.js"></script>
         <script src="data/PROVINCIA_21.js"></script>
         <script src="data/NUCLEOSURBANOS_22.js"></script>
@@ -53,10 +55,10 @@
         <script src="data/REDESTATAL_24.js"></script>
         <script src="data/REDAUTONOMICA_25.js"></script>
         <script src="data/ZONASCONSERVACIONCARRETERASYCAMINOS_26.js"></script>
-        <script src="data/REDPROVCAMINOS_27.js"></script>
+        <script src="data/CAMINOS_27.js"></script>
         <script src="data/LIMITACIONES_28.js"></script>
         <script src="data/intersecciones_29.js"></script>
-        <script src="data/REDPROVCARRETERAS_30.js"></script>
+        <script src="data/CARRETERAS_30.js"></script>
         <script src="data/PPKK100_31.js"></script>
         <script src="data/PPKK1000_32.js"></script>
         <script src="data/CLASIFPAVIMENTOanuario2024_33.js"></script>
@@ -980,6 +982,18 @@
         });
         bounds_group.addLayer(layer_REDPROVCARRETERAS_30);
         map.addLayer(layer_REDPROVCARRETERAS_30);
+//
+var searchControl = new L.Control.Search({
+    layer: layer_REDPROVCARRETERAS_30, // Esta es tu capa GeoJSON
+    propertyName: 'DPH_titularidad_MATRICULA', // El atributo por el que quieres buscar
+    marker: false, // Para no añadir un marcador extra al resultado
+    textPlaceholder: 'Buscar matrícula...',
+    moveToLocation: function(latlng, title, map) {
+        map.setView(latlng, 16); // Zoom al resultado encontrado
+    }
+});
+map.addControl(searchControl);
+//
         function pop_PPKK100_31(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
