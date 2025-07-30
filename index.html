@@ -1723,28 +1723,44 @@ layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
             }
 
             var etiquetasCada = 10000; // 10km en metros
-            var siguienteDistancia = etiquetasCada;
+            var etiquetasCada = 10000; // 10km en metros
 
-            while (siguienteDistancia < distanciaTotal) {
-                for (var j = 1; j < distancias.length; j++) {
-                    if (distancias[j] >= siguienteDistancia) {
-                        var ratio = (siguienteDistancia - distancias[j-1]) / (distancias[j] - distancias[j-1]);
-                        var lat = latlngs[j-1].lat + (latlngs[j].lat - latlngs[j-1].lat) * ratio;
-                        var lng = latlngs[j-1].lng + (latlngs[j].lng - latlngs[j-1].lng) * ratio;
-                        L.tooltip({
-                            permanent: true,
-                            direction: 'center',
-                            offset: [0, -16],
-                            className: 'css_REDPROVCARRETERAS_30'
-                        })
-                        .setLatLng([lat, lng])
-                        .setContent(matricula)
-                        .addTo(map);
-                        break;
-                    }
-                }
-                siguienteDistancia += etiquetasCada;
+if (distanciaTotal < etiquetasCada) {
+    // Si la línea es corta, una etiqueta en el centro
+    var midIdx = Math.floor(latlngs.length / 2);
+    var midPos = latlngs[midIdx];
+    L.tooltip({
+        permanent: true,
+        direction: 'center',
+        offset: [0, -16],
+        className: 'css_REDPROVCARRETERAS_30'
+    })
+    .setLatLng(midPos)
+    .setContent(matricula)
+    .addTo(map);
+} else {
+    var siguienteDistancia = etiquetasCada;
+    while (siguienteDistancia < distanciaTotal) {
+        for (var j = 1; j < distancias.length; j++) {
+            if (distancias[j] >= siguienteDistancia) {
+                var ratio = (siguienteDistancia - distancias[j-1]) / (distancias[j] - distancias[j-1]);
+                var lat = latlngs[j-1].lat + (latlngs[j].lat - latlngs[j-1].lat) * ratio;
+                var lng = latlngs[j-1].lng + (latlngs[j].lng - latlngs[j-1].lng) * ratio;
+                L.tooltip({
+                    permanent: true,
+                    direction: 'center',
+                    offset: [0, -16],
+                    className: 'css_REDPROVCARRETERAS_30'
+                })
+                .setLatLng([lat, lng])
+                .setContent(matricula)
+                .addTo(map);
+                break;
             }
+        }
+        siguienteDistancia += etiquetasCada;
+    }
+}
             // --- FIN DEL BLOQUE NUEVO ---
         }
         // Si tienes más instrucciones para labels, totalMarkers, etc., ponlas aquí:
