@@ -1732,7 +1732,7 @@ if (distanciaTotal < etiquetasCada) {
     L.tooltip({
         permanent: true,
         direction: 'center',
-        offset: [0, -16],
+        offset: [0, 0],
         className: 'css_REDPROVCARRETERAS_30'
     })
     .setLatLng(midPos)
@@ -1749,7 +1749,7 @@ if (distanciaTotal < etiquetasCada) {
                 L.tooltip({
                     permanent: true,
                     direction: 'center',
-                    offset: [0, -16],
+                    offset: [0, 0],
                     className: 'css_REDPROVCARRETERAS_30'
                 })
                 .setLatLng([lat, lng])
@@ -1860,7 +1860,7 @@ if (distanciaTotal < etiquetasCada) {
 			]);
 		// Control de etiquetas para la Red Provincial de Carreteras
 	    if (map.hasLayer(layer_REDPROVCARRETERAS_30)) {
-	        if (map.getZoom() >= 10 && map.getZoom() <= 19) {
+	        if (map.getZoom() >= 10 && map.getZoom() <= 28) {
 	            layer_REDPROVCARRETERAS_30.eachLayer(function (layer) {
 	                layer.openTooltip();
 	            });
