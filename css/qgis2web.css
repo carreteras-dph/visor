@@ -198,13 +198,11 @@
             display: none;
         }
 .css_REDPROVCARRETERAS_30 {
-  background: #FFD600 !important;
+  background: #FFFF00 !important;
   color: #000 !important;
-  border: 1px solid #666 !important;
-  padding: 2px 4px !important;
-  font-size: 10pt !important;
+  padding: 1px 1px !important;
+  font-size: 9pt !important;
   font-family: Arial, sans-serif !important;
-  box-shadow: 1px 1px 4px #bbb;
   text-align: center;
 }
         
