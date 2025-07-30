@@ -1595,7 +1595,12 @@
         setBounds();
         var i = 0;
         layer_REDESTATALAUTOVIAS_23.eachLayer(function(layer) {
-            var context = {
+            if (
+	        layer instanceof L.Polyline &&
+	        Array.isArray(layer._latlngs) &&
+	        layer._latlngs.length > 0
+    		) {
+		var context = {
                 feature: layer.feature,
                 variables: {}
             };
@@ -1605,10 +1610,16 @@
               layer.added = true;
               addLabel(layer, i);
               i++;
-        });
+        }
+	});
         var i = 0;
         layer_REDESTATAL_24.eachLayer(function(layer) {
-            var context = {
+            if (
+	        layer instanceof L.Polyline &&
+	        Array.isArray(layer._latlngs) &&
+	        layer._latlngs.length > 0
+    		) {
+		var context = {
                 feature: layer.feature,
                 variables: {}
             };
@@ -1618,10 +1629,16 @@
               layer.added = true;
               addLabel(layer, i);
               i++;
-        });
+        }
+	});
         var i = 0;
         layer_REDAUTONOMICA_25.eachLayer(function(layer) {
-            var context = {
+            if (
+	        layer instanceof L.Polyline &&
+	        Array.isArray(layer._latlngs) &&
+	        layer._latlngs.length > 0
+    		) {
+		var context = {
                 feature: layer.feature,
                 variables: {}
             };
@@ -1631,10 +1648,16 @@
               layer.added = true;
               addLabel(layer, i);
               i++;
-        });
+	}
+	});
         var i = 0;
         layer_REDPROVCAMINOS_27.eachLayer(function(layer) {
-            var context = {
+            if (
+	        layer instanceof L.Polyline &&
+	        Array.isArray(layer._latlngs) &&
+	        layer._latlngs.length > 0
+    		) {
+		var context = {
                 feature: layer.feature,
                 variables: {}
             };
@@ -1644,7 +1667,8 @@
               layer.added = true;
               addLabel(layer, i);
               i++;
-        });
+	    }
+	    });
         var i = 0;
 //original
 //        layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
