@@ -14,7 +14,6 @@
         <link rel="stylesheet" href="css/MarkerCluster.css">
         <link rel="stylesheet" href="css/MarkerCluster.Default.css">
         <link rel="stylesheet" href="css/leaflet-search.css">
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-control-search/dist/leaflet-search.min.css" />
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
@@ -47,7 +46,6 @@
         <script src="js/leaflet-measure.js"></script>
         <script src="js/leaflet.markercluster.js"></script>
         <script src="js/leaflet-search.js"></script>
-	<script src="https://unpkg.com/leaflet-control-search/dist/leaflet-search.min.js"></script>
         <script src="data/TRMINOSMUNICIPALES_20.js"></script>
         <script src="data/PROVINCIA_21.js"></script>
         <script src="data/NUCLEOSURBANOS_22.js"></script>
@@ -983,16 +981,16 @@
         bounds_group.addLayer(layer_REDPROVCARRETERAS_30);
         map.addLayer(layer_REDPROVCARRETERAS_30);
 //
-var searchControl = new L.Control.Search({
-    layer: layer_REDPROVCARRETERAS_30, // Esta es tu capa GeoJSON
-    propertyName: 'DPH_titularidad_MATRICULA', // El atributo por el que quieres buscar
-    marker: false, // Para no añadir un marcador extra al resultado
-    textPlaceholder: 'Buscar matrícula...',
-    moveToLocation: function(latlng, title, map) {
-        map.setView(latlng, 16); // Zoom al resultado encontrado
-    }
-});
-map.addControl(searchControl);
+// searchControl = new L.Control.Search({
+//    layer: layer_REDPROVCARRETERAS_30, // Esta es tu capa GeoJSON
+//    propertyName: 'DPH_titularidad_MATRICULA', // El atributo por el que quieres buscar
+//    marker: false, // Para no añadir un marcador extra al resultado
+//    textPlaceholder: 'Buscar matrícula...',
+//    moveToLocation: function(latlng, title, map) {
+//        map.setView(latlng, 16); // Zoom al resultado encontrado
+//    }
+//});
+//map.addControl(searchControl);
 //
         function pop_PPKK100_31(feature, layer) {
             var popupContent = '<table>\
