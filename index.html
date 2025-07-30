@@ -1685,46 +1685,75 @@
 //});
 
 		
-	layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
+layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
     if (
         layer instanceof L.Polyline &&
         Array.isArray(layer._latlngs) &&
         layer._latlngs.length > 0
-    ) {	
+    ) {
         var matricula = layer.feature.properties['DPH_titularidad_MATRICULA'];
         if (typeof matricula === "string" && matricula.trim() !== "") {
-            // === AQUI VA TU NUEVO BLOQUE ===
+
+            // === AQUÍ VA EL BLOQUE DE ETIQUETAS CADA 10KM ===
+
             var latlngs = layer.getLatLngs();
             // Si es MultiPolyline, aplanamos el array
-            if (Array.isArray(latlngs[0])) {
-                latlngs = latlngs.flat();
+            if (Array.isArray(latlngs[0])) latlngs = latlngs.flat();
+
+            // --- FUNCIÓN PARA DISTANCIA GEODÉSICA ---
+            function haversineDistance(latlng1, latlng2) {
+                var R = 6371000;
+                var toRad = function(deg) { return deg * Math.PI / 180; };
+                var dLat = toRad(latlng2.lat - latlng1.lat);
+                var dLon = toRad(latlng2.lng - latlng1.lng);
+                var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                        Math.cos(toRad(latlng1.lat)) * Math.cos(toRad(latlng2.lat)) *
+                        Math.sin(dLon/2) * Math.sin(dLon/2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                return R * c;
             }
-            if (latlngs.length > 2) {
-                // Por ejemplo, cada 1/4 de la línea
-                var pos1 = latlngs[Math.floor(latlngs.length * 0.25)];
-                var pos2 = latlngs[Math.floor(latlngs.length * 0.50)];
-                var pos3 = latlngs[Math.floor(latlngs.length * 0.75)];
-                [pos1, pos2, pos3].forEach(function(pos) {
-                    L.tooltip({
-                        permanent: true,
-                        direction: 'center',
-                        offset: [0, -16],
-                        className: 'css_REDPROVCARRETERAS_30'
-                    })
-                    .setLatLng(pos)
-                    .setContent(matricula)
-                    .addTo(map);
-                });
+            // ------------------------------------------
+
+            var distanciaTotal = 0;
+            var distancias = [0];
+            for (var i = 1; i < latlngs.length; i++) {
+                var seg = haversineDistance(latlngs[i-1], latlngs[i]);
+                distanciaTotal += seg;
+                distancias.push(distanciaTotal);
             }
-            // Si quieres dejar un único tooltip central, ponlo aquí como else
+
+            var etiquetasCada = 10000; // 10km en metros
+            var siguienteDistancia = etiquetasCada;
+
+            while (siguienteDistancia < distanciaTotal) {
+                for (var j = 1; j < distancias.length; j++) {
+                    if (distancias[j] >= siguienteDistancia) {
+                        var ratio = (siguienteDistancia - distancias[j-1]) / (distancias[j] - distancias[j-1]);
+                        var lat = latlngs[j-1].lat + (latlngs[j].lat - latlngs[j-1].lat) * ratio;
+                        var lng = latlngs[j-1].lng + (latlngs[j].lng - latlngs[j-1].lng) * ratio;
+                        L.tooltip({
+                            permanent: true,
+                            direction: 'center',
+                            offset: [0, -16],
+                            className: 'css_REDPROVCARRETERAS_30'
+                        })
+                        .setLatLng([lat, lng])
+                        .setContent(matricula)
+                        .addTo(map);
+                        break;
+                    }
+                }
+                siguienteDistancia += etiquetasCada;
+            }
+            // --- FIN DEL BLOQUE NUEVO ---
         }
+        // Si tienes más instrucciones para labels, totalMarkers, etc., ponlas aquí:
         labels.push(layer);
         totalMarkers += 1;
         layer.added = true;
         addLabel(layer, i);
         i++;
     } else {
-        // Log para depuración de capas inválidas
         console.warn("Capa polilínea sin geometría válida (no se procesa):", layer);
     }
 });
