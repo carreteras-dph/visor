@@ -1774,32 +1774,60 @@ if (distanciaTotal < etiquetasCada) {
     }
 });
 		
-        var i = 0;
-        layer_PPKK100_31.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['PK'] !== null?String('<div style="color: #000000; font-size: 7pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['PK']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_PPKK100_31'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
-        var i = 0;
+        // Crear tooltips solo una vez (puedes mantener tu código original para crearlos)
+// Modificando para poner direction:'right' y offset adecuado
+
+var i = 0;
+layer_PPKK100_31.eachLayer(function(layer) {
+    var texto = layer.feature.properties['PK'] !== null ?
+      '<div style="color: #000000; font-size: 7pt; font-family: Arial, sans-serif;">' + layer.feature.properties['PK'] + '</div>' : '';
+    layer.bindTooltip(texto, { permanent: true, direction: 'right', offset: [8, 0], className: 'css_PPKK100_31' });
+    labels.push(layer);
+    totalMarkers += 1;
+    layer.added = true;
+    addLabel(layer, i);
+    i++;
+});
+
+var i = 0;
+layer_PPKK1000_32.eachLayer(function(layer) {
+    var texto = layer.feature.properties['PK'] !== null ?
+      '<div style="color: #000000; font-size: 10pt; font-family: Arial, sans-serif;">' + layer.feature.properties['PK'] + '</div>' : '';
+    layer.bindTooltip(texto, { permanent: true, direction: 'right', offset: [8, 0], className: 'css_PPKK1000_32' });
+    labels.push(layer);
+    totalMarkers += 1;
+    layer.added = true;
+    addLabel(layer, i);
+    i++;
+});
+
+// Controlar visibilidad en función del zoom
+map.on('zoomend', function(){
+    var zoom = map.getZoom();
+
+    // Para PPKK1000_32: visible entre zoom 15 y 28
+    if (map.hasLayer(layer_PPKK1000_32)) {
         layer_PPKK1000_32.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['PK'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['PK']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_PPKK1000_32'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
+            if (zoom >= 15 && zoom <= 28) {
+                layer.openTooltip();
+            } else {
+                layer.closeTooltip();
+            }
         });
+    }
+
+    // Para PPKK100_31: visible entre zoom 17 y 28
+    if (map.hasLayer(layer_PPKK100_31)) {
+        layer_PPKK100_31.eachLayer(function(layer) {
+            if (zoom >= 17 && zoom <= 28) {
+                layer.openTooltip();
+            } else {
+                layer.closeTooltip();
+            }
+        });
+    }
+});
+
                 if (map.hasLayer(layer_REDESTATALAUTOVIAS_23)) {
                     if (map.getZoom() <= 10 && map.getZoom() >= 19) {
                         layer_REDESTATALAUTOVIAS_23.eachLayer(function (layer) {
