@@ -1515,22 +1515,25 @@ attribution: '',
         });
         var overlaysTree = [
         {label: '<b>RED PROV CARRETERAS Y CAMINOS</b>',  selectAllCheckbox: true, children: [
-            {label: '<img src="legend/AFOROS_36.png" /> AFOROS', layer: cluster_AFOROS_36},
-            {label: 'CLASIF POR TRÁFICO<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T20.png" /></td><td>T2</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T311.png" /></td><td>T31</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T412.png" /></td><td>T41</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T423.png" /></td><td>T42</td></tr></table>', layer: layer_CLASIFPORTRFICO_35},
-            {label: 'CLASIF ANCHURA (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_34_50.png" /></td><td><5</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_34_71.png" /></td><td>>7</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_34_572.png" /></td><td>5-7</td></tr></table>', layer: layer_CLASIFANCHURAanuario2024_34},
-            {label: 'CLASIF PAVIMENTO (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_33_A0.png" /></td><td>A</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_33_R1.png" /></td><td>R</td></tr></table>', layer: layer_CLASIFPAVIMENTOanuario2024_33},
-            {label: '<img src="legend/PPKK1000_32.png" /> PPKK:1000', layer: layer_PPKK1000_32},
-            {label: '<img src="legend/PPKK100_31.png" /> PPKK:100', layer: layer_PPKK100_31},
-            {label: '<img src="legend/REDPROVCARRETERAS_30.png" /> RED PROV CARRETERAS', layer: layer_REDPROVCARRETERAS_30},
+		{label: '<b>CAPAS AUXILIARES</b>',  collapsed: true, selectAllCheckbox: true, children: [
+			{label: '<img src="legend/AFOROS_36.png" /> AFOROS', layer: cluster_AFOROS_36},
+          		{label: 'CLASIF POR TRÁFICO<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T20.png" /></td><td>T2</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T311.png" /></td><td>T31</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T412.png" /></td><td>T41</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T423.png" /></td><td>T42</td></tr></table>', layer: layer_CLASIFPORTRFICO_35},
+           		{label: 'CLASIF ANCHURA (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_34_50.png" /></td><td><5</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_34_71.png" /></td><td>>7</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFANCHURAanuario2024_34_572.png" /></td><td>5-7</td></tr></table>', layer: layer_CLASIFANCHURAanuario2024_34},
+           		{label: 'CLASIF PAVIMENTO (anuario 2024)<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_33_A0.png" /></td><td>A</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPAVIMENTOanuario2024_33_R1.png" /></td><td>R</td></tr></table>', layer: layer_CLASIFPAVIMENTOanuario2024_33},
+           		{label: '<img src="legend/PPKK1000_32.png" /> PPKK:1000', layer: layer_PPKK1000_32},
+           		{label: '<img src="legend/PPKK100_31.png" /> PPKK:100', layer: layer_PPKK100_31},
+			{label: 'ZONAS CONSERVACION CARRETERAS Y CAMINOS<br /><table><tr><td style="text-align: center;"><img src="legend/ZONASCONSERVACIONCARRETERASYCAMINOS_26_NORTE0.png" /></td><td>NORTE</td></tr><tr><td style="text-align: center;"><img src="legend/ZONASCONSERVACIONCARRETERASYCAMINOS_26_SUR1.png" /></td><td>SUR</td></tr></table>', layer: layer_ZONASCONSERVACIONCARRETERASYCAMINOS_26},
+			]},
+	    {label: '<img src="legend/REDPROVCARRETERAS_30.png" /> RED PROV CARRETERAS', layer: layer_REDPROVCARRETERAS_30},
             {label: '<img src="legend/intersecciones_29.png" /> (intersecciones)', layer: layer_intersecciones_29},
-            {label: '<img src="legend/LIMITACIONES_28.png" /> LIMITACIONES', layer: layer_LIMITACIONES_28},
             {label: '<img src="legend/REDPROVCAMINOS_27.png" /> RED PROV CAMINOS', layer: layer_REDPROVCAMINOS_27},
-            {label: 'ZONAS CONSERVACION CARRETERAS Y CAMINOS<br /><table><tr><td style="text-align: center;"><img src="legend/ZONASCONSERVACIONCARRETERASYCAMINOS_26_NORTE0.png" /></td><td>NORTE</td></tr><tr><td style="text-align: center;"><img src="legend/ZONASCONSERVACIONCARRETERASYCAMINOS_26_SUR1.png" /></td><td>SUR</td></tr></table>', layer: layer_ZONASCONSERVACIONCARRETERASYCAMINOS_26},]},
-        {label: '<b>OTRAS REDES</b>',  selectAllCheckbox: true, children: [
+	    {label: '<img src="legend/LIMITACIONES_28.png" /> LIMITACIONES', layer: layer_LIMITACIONES_28},
+            		]},
+        {label: '<b>OTRAS REDES</b>',  collapsed: true, selectAllCheckbox: true, children: [
             {label: '<img src="legend/REDAUTONOMICA_25.png" /> RED AUTONOMICA', layer: layer_REDAUTONOMICA_25},
             {label: '<img src="legend/REDESTATAL_24.png" /> RED ESTATAL', layer: layer_REDESTATAL_24},
             {label: '<img src="legend/REDESTATALAUTOVIAS_23.png" /> RED ESTATAL (AUTOVIAS)', layer: layer_REDESTATALAUTOVIAS_23},]},
-        {label: '<b>LIMITES ADMINISTRATIVOS</b>',  selectAllCheckbox: true, children: [
+        {label: '<b>LIMITES ADMINISTRATIVOS</b>',  collapsed: true, selectAllCheckbox: true, children: [
             {label: '<img src="legend/NUCLEOSURBANOS_22.png" /> NUCLEOS URBANOS', layer: layer_NUCLEOSURBANOS_22},
             {label: '<img src="legend/PROVINCIA_21.png" /> PROVINCIA', layer: layer_PROVINCIA_21},
             {label: '<img src="legend/TRMINOSMUNICIPALES_20.png" /> TÉRMINOS MUNICIPALES', layer: layer_TRMINOSMUNICIPALES_20},]},
@@ -1540,7 +1543,7 @@ attribution: '',
             {label: "HIDR Masas de agua", layer: layer_HIDRMasasdeagua_17},
             {label: "HIDR Red hidrográfica", layer: layer_HIDRRedhidrogrfica_16},
             {label: "HIDR Límite tierra-agua", layer: layer_HIDRLmitetierraagua_15},
-		{label: "COSTAS Dominio Público Marítimo Terrestre", layer: layer_DPMT_37},
+	    {label: "COSTAS Dominio Público Marítimo Terrestre", layer: layer_DPMT_37},
             {label: "CATASTRO", layer: layer_CATASTRO_14},
             {label: "REDIAM Inventario de Vías Pecuarias", layer: layer_REDIAMInventariodeVasPecuarias_13},
             {label: "REDIAM Espacios Naturales Protegidos", layer: layer_REDIAMEspaciosNaturalesProtegidos_12},
@@ -1564,7 +1567,7 @@ attribution: '',
             //openedSymbol: '&#8863; &#x1f5c1;',
             //collapseAll: 'Collapse all',
             //expandAll: 'Expand all',
-            collapsed: true,
+            collapsed: false,
         });
         lay.addTo(map);
         map.on("zoomend", function(){
