@@ -344,56 +344,49 @@ var layer_DPMT_37 = L.tileLayer.wms(wmsUrl, {
     attribution: '',
 });
 		//
-	// Pane: Límite tierra-agua
-map.createPane('pane_HIDRLmitetierraagua_15');
+	map.createPane('pane_HIDRLmitetierraagua_15');
 map.getPane('pane_HIDRLmitetierraagua_15').style.zIndex = 415;
-var layer_HIDRLmitetierraagua_15 = L.tileLayer.wms("https://servicios.idee.es/wms-inspire/hidrografia", {
-    layers: 'HY.PhysicalWaters.LandWaterBoundary',
-    format: 'image/png',
-    transparent: true,
-	info_format: 'text/html',
-    pane: 'pane_HIDRLmitetierraagua_15',
-    opacity: 1,
-    attribution: ''
+var layer_HIDRLmitetierraagua_15 = L.WMS.layer("https://servicios.idee.es/wms-inspire/hidrografia", "HY.PhysicalWaters.LandWaterBoundary", {
+pane: 'pane_HIDRLmitetierraagua_15',
+format: 'image/png',
+uppercase: true,
+tiled: true,
+info_format: 'text/html',
+opacity: 1,
+attribution: '',
 });
-
-// Pane: Red hidrográfica
 map.createPane('pane_HIDRRedhidrogrfica_16');
 map.getPane('pane_HIDRRedhidrogrfica_16').style.zIndex = 416;
-var layer_HIDRRedhidrogrfica_16 = L.tileLayer.wms("https://servicios.idee.es/wms-inspire/hidrografia", {
-    layers: 'HY.Network',
-    format: 'image/png',
-    transparent: true,
-	info_format: 'text/html',
-    pane: 'pane_HIDRRedhidrogrfica_16',
-    opacity: 1,
-    attribution: ''
+var layer_HIDRRedhidrogrfica_16 = L.WMS.layer("https://servicios.idee.es/wms-inspire/hidrografia", "HY.Network", {
+pane: 'pane_HIDRRedhidrogrfica_16',
+format: 'image/png',
+uppercase: true,
+transparent: true,
+info_format: 'text/html',
+opacity: 1,
+attribution: '',
 });
-
-// Pane: Masas de agua
 map.createPane('pane_HIDRMasasdeagua_17');
 map.getPane('pane_HIDRMasasdeagua_17').style.zIndex = 417;
-var layer_HIDRMasasdeagua_17 = L.tileLayer.wms("https://servicios.idee.es/wms-inspire/hidrografia", {
-    layers: 'HY.PhysicalWaters.Waterbodies',
-    format: 'image/png',
-    transparent: true,
-	info_format: 'text/html',
-    pane: 'pane_HIDRMasasdeagua_17',
-    opacity: 1,
-    attribution: ''
+var layer_HIDRMasasdeagua_17 = L.WMS.layer("https://servicios.idee.es/wms-inspire/hidrografia", "HY.PhysicalWaters.Waterbodies", {
+pane: 'pane_HIDRMasasdeagua_17',
+format: 'image/png',
+uppercase: true,
+transparent: true,
+info_format: 'text/html',
+opacity: 1,
+attribution: '',
 });
-
-// Pane: Humedales
 map.createPane('pane_HIDRHumedales_18');
 map.getPane('pane_HIDRHumedales_18').style.zIndex = 418;
-var layer_HIDRHumedales_18 = L.tileLayer.wms("https://servicios.idee.es/wms-inspire/hidrografia", {
-    layers: 'HY.PhysicalWaters.Wetland',
-    format: 'image/png',
-    transparent: true,
-	info_format: 'text/html',
-    pane: 'pane_HIDRHumedales_18',
-    opacity: 1,
-    attribution: ''
+var layer_HIDRHumedales_18 = L.WMS.layer("https://servicios.idee.es/wms-inspire/hidrografia", "HY.PhysicalWaters.Wetland", {
+pane: 'pane_HIDRHumedales_18',
+format: 'image/png',
+uppercase: true,
+transparent: true,
+info_format: 'text/html',
+opacity: 1,
+attribution: '',
 });
         map.createPane('pane_IDEAndaluciaMTA10v_2007_19');
         map.getPane('pane_IDEAndaluciaMTA10v_2007_19').style.zIndex = 419;
