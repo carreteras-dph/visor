@@ -477,7 +477,7 @@ var layer_DPMT_37 = L.tileLayer.wms(wmsUrl, {
                 lineJoin: 'miter',
                 weight: 2.0, 
                 fill: true,
-                fillOpacity: 1,
+                fillOpacity: 0.25,
                 fillColor: 'rgba(255,255,225,0.5019607843137255)',
                 interactive: false,
             }
@@ -546,6 +546,7 @@ var layer_DPMT_37 = L.tileLayer.wms(wmsUrl, {
             style: style_NUCLEOSURBANOS_22_0,
         });
         bounds_group.addLayer(layer_NUCLEOSURBANOS_22);
+	map.addLayer(layer_NUCLEOSURBANOS_22);
         function pop_REDESTATALAUTOVIAS_23(feature, layer) {
             var popupContent = '<table>\
                 </table>';
