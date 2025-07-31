@@ -329,22 +329,19 @@
             attribution: '',
         });
       //
-		map.createPane('pane_DPMT_37');
-	map.getPane('pane_DPMT_37').style.zIndex = 437;
+	map.createPane('pane_DPMT_37');
+map.getPane('pane_DPMT_37').style.zIndex = 437;
 
-	var wmsUrl = encodeURIComponent("https://wms.mapama.gob.es/sig/Costas/DPMT");
-	var proxyUrl = "https://api.allorigins.win/raw?url=" + wmsUrl;
-
-	var layer_DPMT_37 = L.tileLayer.wms(proxyUrl, {
+var wmsUrl = "https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx";
+var layer_DPMT_37 = L.tileLayer.wms(wmsUrl, {
     layers: 'AM.CoastalZoneManagementArea',
     pane: 'pane_DPMT_37',
     format: 'image/png',
-	info_format: 'text/html',
     transparent: true,
     tiled: true,
     opacity: 1,
     attribution: '',
-	});
+});
 		//
 	map.createPane('pane_HIDRLmitetierraagua_15');
         map.getPane('pane_HIDRLmitetierraagua_15').style.zIndex = 415;
