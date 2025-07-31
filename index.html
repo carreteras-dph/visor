@@ -328,7 +328,20 @@
             opacity: 1,
             attribution: '',
         });
-        map.createPane('pane_HIDRLmitetierraagua_15');
+        map.createPane('pane_DPMT_15');
+        map.getPane('pane_DPMT_15').style.zIndex = 415;
+        var layer_DPMT_15 = L.WMS.layer("https://wms.mapama.gob.es/sig/Costas/DPMT", "AM.CoastalZoneManagementArea", {
+            pane: 'pane_DPMT_15',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            attribution: '',
+        });
+	map.createPane('pane_HIDRLmitetierraagua_15');
         map.getPane('pane_HIDRLmitetierraagua_15').style.zIndex = 415;
         var layer_HIDRLmitetierraagua_15 = L.WMS.layer("https://servicios.idee.es/wms-inspire/hidrografia", "HY.PhysicalWaters.LandWaterBoundary", {
             pane: 'pane_HIDRLmitetierraagua_15',
@@ -1531,6 +1544,7 @@
             {label: "HIDR Masas de agua", layer: layer_HIDRMasasdeagua_17},
             {label: "HIDR Red hidrográfica", layer: layer_HIDRRedhidrogrfica_16},
             {label: "HIDR Límite tierra-agua", layer: layer_HIDRLmitetierraagua_15},
+		{label: "COSTAS Dominio Público Marítimo Terrestre", layer: layer_DPMT_15},
             {label: "CATASTRO", layer: layer_CATASTRO_14},
             {label: "REDIAM Inventario de Vías Pecuarias", layer: layer_REDIAMInventariodeVasPecuarias_13},
             {label: "REDIAM Espacios Naturales Protegidos", layer: layer_REDIAMEspaciosNaturalesProtegidos_12},
