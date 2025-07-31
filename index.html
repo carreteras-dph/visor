@@ -1540,10 +1540,10 @@ attribution: '',
             {label: '<img src="legend/TRMINOSMUNICIPALES_20.png" /> TÉRMINOS MUNICIPALES', layer: layer_TRMINOSMUNICIPALES_20},]},
         {label: '<b>WMS</b>', collapsed: true, selectAllCheckbox: true, children: [
             {label: "IDEAndalucia MTA10v_2007", layer: layer_IDEAndaluciaMTA10v_2007_19},
-            {label: "HIDR Humedales", layer: layer_HIDRHumedales_18},
-            {label: "HIDR Masas de agua", layer: layer_HIDRMasasdeagua_17},
-            {label: "HIDR Red hidrográfica", layer: layer_HIDRRedhidrogrfica_16},
-            {label: "HIDR Límite tierra-agua", layer: layer_HIDRLmitetierraagua_15},
+            {label: "HIDROGR Humedales", layer: layer_HIDRHumedales_18},
+            {label: "HIDROGR Masas de agua", layer: layer_HIDRMasasdeagua_17},
+            {label: "HIDROGR Red hidrográfica", layer: layer_HIDRRedhidrogrfica_16},
+            {label: "HIDROGR Límite tierra-agua", layer: layer_HIDRLmitetierraagua_15},
 	    {label: "COSTAS Dominio Público Marítimo Terrestre", layer: layer_DPMT_37},
             {label: "CATASTRO", layer: layer_CATASTRO_14},
             {label: "REDIAM Inventario de Vías Pecuarias", layer: layer_REDIAMInventariodeVasPecuarias_13},
@@ -1568,7 +1568,7 @@ attribution: '',
             //openedSymbol: '&#8863; &#x1f5c1;',
             //collapseAll: 'Collapse all',
             //expandAll: 'Expand all',
-            collapsed: false,
+            collapsed: true,
         });
         lay.addTo(map);
         map.on("zoomend", function(){
