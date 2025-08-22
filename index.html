@@ -1080,11 +1080,11 @@ const url = {"Nominatim": "https://nominatim.openstreetmap.org/search?format=geo
         function style_PPKK100_31_0() {
             return {
                 pane: 'pane_PPKK100_31',
-                radius: 3.0,
+                radius: 4.0,
                 stroke: false,
                 fill: true,
-                fillOpacity: 0.8,
-                fillColor: 'rgba(64,64,64,1)',
+                fillOpacity: 1,
+                fillColor: 'rgba(191,191,191,1.0)',
                 interactive: true,
             }
         }
@@ -1939,32 +1939,74 @@ map.on('zoomend', updateLabelVisibility);
 
 
 	
-        // Crear tooltips solo una vez (puedes mantener tu código original para crearlos)
-// Modificando para poner direction:'right' y offset adecuado
+       var tooltipsLayerGroupPPK100_31 = L.layerGroup().addTo(map);
+var tooltipsLayerGroupPPK1000_32 = L.layerGroup().addTo(map);
 
-//var i = 0;
-//layer_PPKK100_31.eachLayer(function(layer) {
-//    var texto = layer.feature.properties['PK'] !== null ?
-//      '<div style="color: #000000; font-size: 7pt; font-family: Arial, sans-serif;">' + layer.feature.properties['PK'] + '</div>' : '';
-//    layer.bindTooltip(texto, { permanent: true, direction: 'right', offset: [8, 0], className: 'css_PPKK100_31' });
-//    labels.push(layer);
-//    totalMarkers += 1;
-//    layer.added = true;
-//    addLabel(layer, i);
-//    i++;
-//});
+function updateVisiblePPKLabels() {
+    var zoom = map.getZoom();
+    var bounds = map.getBounds();
 
-//var i = 0;
-//layer_PPKK1000_32.eachLayer(function(layer) {
-//    var texto = layer.feature.properties['PK'] !== null ?
-//      '<div style="color: #000000; font-size: 10pt; font-family: Arial, sans-serif;">' + layer.feature.properties['PK'] + '</div>' : '';
-//    layer.bindTooltip(texto, { permanent: true, direction: 'right', offset: [8, 0], className: 'css_PPKK1000_32' });
-//    labels.push(layer);
-//    totalMarkers += 1;
-//    layer.added = true;
-//    addLabel(layer, i);
-//    i++;
-//});
+    // Limpiar etiquetas anteriores
+    tooltipsLayerGroupPPK100_31.clearLayers();
+    tooltipsLayerGroupPPK1000_32.clearLayers();
+
+    if (zoom > 15) {
+        // Mostrar etiquetas solo si la capa está activa en el mapa
+        if (map.hasLayer(layer_PPKK100_31)) {
+            layer_PPKK100_31.eachLayer(function(layer) {
+                var latlng = layer.getLatLng();
+                if (bounds.contains(latlng)) {
+                    var texto = layer.feature.properties['PK'] !== null ?
+                        '<div style="color: #000000; font-size: 7pt; font-family: Arial, sans-serif;">' + layer.feature.properties['PK'] + '</div>' : '';
+                    var tooltip = L.tooltip({
+                        permanent: true,
+                        direction: 'right',
+                        offset: [8, 0],
+                        className: 'css_PPKK100_31'
+                    })
+                    .setLatLng(latlng)
+                    .setContent(texto);
+                    tooltipsLayerGroupPPK100_31.addLayer(tooltip);
+                }
+            });
+        }
+
+        if (map.hasLayer(layer_PPKK1000_32)) {
+            layer_PPKK1000_32.eachLayer(function(layer) {
+                var latlng = layer.getLatLng();
+                if (bounds.contains(latlng)) {
+                    var texto = layer.feature.properties['PK'] !== null ?
+                        '<div style="color: #000000; background-color: white; font-size: 10pt; font-family: Arial, sans-serif;">' +
+                        layer.feature.properties['PK'] + '</div>' : '';
+                    var tooltip = L.tooltip({
+                        permanent: true,
+                        direction: 'right',  // corregido 'rigth' a 'right'
+                        offset: [8, 0],
+                        className: 'css_PPKK1000_32'
+                    })
+                    .setLatLng(latlng)
+                    .setContent(texto);
+                    tooltipsLayerGroupPPK1000_32.addLayer(tooltip);
+                }
+            });
+        }
+    }
+}
+
+// Ejecutar actualización inicial
+updateVisiblePPKLabels();
+
+// Actualizar etiquetas cada vez que se mueve o cambia el zoom el mapa
+map.on('moveend', updateVisiblePPKLabels);
+map.on('zoomend', updateVisiblePPKLabels);
+
+
+
+
+
+
+
+
 
 // Controlar visibilidad en función del zoom
 map.on('zoomend', function(){
