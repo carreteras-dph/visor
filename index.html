@@ -78,7 +78,7 @@
             zoomControl:false, maxZoom:28, minZoom:1
         })
         var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS </a>&middot;'+' Alberto Romero López');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         // remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
@@ -952,15 +952,7 @@ attribution: '',
                         <td class="visible-with-data" id="DPH_titularidad_L_tramo">' + (feature.properties['DPH_titularidad_L_tramo'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_L_tramo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">TITULARIDAD</th>\
-                        <td class="visible-with-data" id="DPH_titularidad_TITULARIDAD">' + (feature.properties['DPH_titularidad_TITULARIDAD'] !== null ? autolinker.link(String(feature.properties['DPH_titularidad_TITULARIDAD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">ZONA CONS</th>\
-                        <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_ZONA CONS">' + (feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_ZONA CONS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">DENOMINACIÓN</th>\
+                        <th scope="row">DENOM</th>\
                         <td class="visible-with-data" id="RED_PROV_CARRETERAS_base_DENOM">' + (feature.properties['RED_PROV_CARRETERAS_base_DENOM'] !== null ? autolinker.link(String(feature.properties['RED_PROV_CARRETERAS_base_DENOM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
@@ -1088,7 +1080,7 @@ const url = {"Nominatim": "https://nominatim.openstreetmap.org/search?format=geo
         function style_PPKK100_31_0() {
             return {
                 pane: 'pane_PPKK100_31',
-                radius: 3.0,
+                radius: 4.0,
                 stroke: false,
                 fill: true,
                 fillOpacity: 1,
@@ -1204,6 +1196,10 @@ searchControl1.on('search:locationfound', function(e) {
 // Añade controles al mapa solo una vez
 map.addControl(searchControl1);
 map.addControl(searchControl2);
+
+if (map.hasLayer(layer_PPKK100_31)) {
+    map.removeLayer(layer_PPKK100_31);
+}
 
 // Popup para segundo buscador (PK)
 searchControl2.on('search:locationfound', function(e) {
@@ -1692,9 +1688,9 @@ addIconToSearchControl(searchControl2, 'fa fa-flag');  // Para PK
             {label: "IDEAndalucia Fondo Orográfico Siose 2013", layer: layer_IDEAndaluciaFondoOrogrficoSiose2013_0},]},]
         var lay = L.control.layers.tree(null, overlaysTree,{
             //namedToggle: true,
-            //selectorBack: false,
-            //closedSymbol: '&#8862; &#x1f5c0;',
-            //openedSymbol: '&#8863; &#x1f5c1;',
+            selectorBack: false,
+            closedSymbol: '&#8862; &#x1f5c0;',
+            openedSymbol: '&#8863; &#x1f5c1;',
             //collapseAll: 'Collapse all',
             //expandAll: 'Expand all',
             collapsed: true,
@@ -1840,99 +1836,109 @@ addIconToSearchControl(searchControl2, 'fa fa-flag');  // Para PK
 //});
 
 		
-layer_REDPROVCARRETERAS_30.eachLayer(function(layer) {
-    if (
-        layer instanceof L.Polyline &&
-        Array.isArray(layer._latlngs) &&
-        layer._latlngs.length > 0
-    ) {
-        var matricula = layer.feature.properties['DPH_titularidad_MATRICULA'];
-        if (typeof matricula === "string" && matricula.trim() !== "") {
 
-            // === AQUÍ VA EL BLOQUE DE ETIQUETAS CADA 10KM ===
 
-            var latlngs = layer.getLatLngs();
-            // Si es MultiPolyline, aplanamos el array
-            if (Array.isArray(latlngs[0])) latlngs = latlngs.flat();
+	
 
-            // --- FUNCIÓN PARA DISTANCIA GEODÉSICA ---
-            function haversineDistance(latlng1, latlng2) {
-                var R = 6371000;
-                var toRad = function(deg) { return deg * Math.PI / 180; };
-                var dLat = toRad(latlng2.lat - latlng1.lat);
-                var dLon = toRad(latlng2.lng - latlng1.lng);
-                var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                        Math.cos(toRad(latlng1.lat)) * Math.cos(toRad(latlng2.lat)) *
-                        Math.sin(dLon/2) * Math.sin(dLon/2);
-                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                return R * c;
-            }
-            // ------------------------------------------
 
-            var distanciaTotal = 0;
-            var distancias = [0];
-            for (var i = 1; i < latlngs.length; i++) {
-                var seg = haversineDistance(latlngs[i-1], latlngs[i]);
-                distanciaTotal += seg;
-                distancias.push(distanciaTotal);
-            }
 
-            var etiquetasCada = 10000; // 10km en metros
-            var etiquetasCada = 10000; // 10km en metros
 
-if (distanciaTotal < etiquetasCada) {
-    // Si la línea es corta, una etiqueta en el centro
-    var midIdx = Math.floor(latlngs.length / 2);
-    var midPos = latlngs[midIdx];
-    L.tooltip({
-        permanent: true,
-        direction: 'center',
-        offset: [0, 0],
-        className: 'css_REDPROVCARRETERAS_30'
-    })
-    .setLatLng(midPos)
-    .setContent(matricula)
-    .addTo(map);
-} else {
-    var siguienteDistancia = etiquetasCada;
-    while (siguienteDistancia < distanciaTotal) {
-        for (var j = 1; j < distancias.length; j++) {
-            if (distancias[j] >= siguienteDistancia) {
-                var ratio = (siguienteDistancia - distancias[j-1]) / (distancias[j] - distancias[j-1]);
-                var lat = latlngs[j-1].lat + (latlngs[j].lat - latlngs[j-1].lat) * ratio;
-                var lng = latlngs[j-1].lng + (latlngs[j].lng - latlngs[j-1].lng) * ratio;
-                L.tooltip({
+
+
+// Grupo para etiquetas de caminoss y carreteras, separados para mejor control
+var tooltipsLayerGroupCaminos = L.layerGroup();
+var tooltipsLayerGroupCarreteras = L.layerGroup();
+
+// Función genérica para actualizar etiquetas en una capa dada
+function updateVisibleLabelsForLayer(layer, group, attributeName, cssClass) {
+    group.clearLayers();
+
+    layer.eachLayer(function(subLayer) {
+        if (
+            subLayer instanceof L.Polyline &&
+            Array.isArray(subLayer._latlngs) &&
+            subLayer._latlngs.length > 0
+        ) {
+            var matricula = subLayer.feature.properties[attributeName];
+            if (typeof matricula === "string" && matricula.trim() !== "") {
+                
+                var latlngs = subLayer.getLatLngs();
+                if (Array.isArray(latlngs[0])) latlngs = latlngs.flat();
+
+                var bounds = map.getBounds();
+
+                var visiblePoints = latlngs.filter(function(latlng) {
+                    return bounds.contains(latlng);
+                });
+
+                if (visiblePoints.length === 0) {
+                    visiblePoints = latlngs;
+                }
+
+                var midIdx = Math.floor(visiblePoints.length / 2);
+                var midPos = visiblePoints[midIdx];
+
+                var tooltip = L.tooltip({
                     permanent: true,
                     direction: 'center',
                     offset: [0, 0],
-                    className: 'css_REDPROVCARRETERAS_30'
+                    className: cssClass
                 })
-                .setLatLng([lat, lng])
-                .setContent(matricula)
-                .addTo(map);
-                break;
+                .setLatLng(midPos)
+                .setContent(matricula);
+
+                group.addLayer(tooltip);
             }
         }
-        siguienteDistancia += etiquetasCada;
+    });
+}
+
+// Función para actualizar ambas capas
+function updateAllVisibleLabels() {
+    updateVisibleLabelsForLayer(layer_REDPROVCAMINOS_27, tooltipsLayerGroupCaminos, 'MATRICULA', 'css_REDPROVCAMINOS_27');
+    updateVisibleLabelsForLayer(layer_REDPROVCARRETERAS_30, tooltipsLayerGroupCarreteras, 'DPH_titularidad_MATRICULA', 'css_REDPROVCARRETERAS_30');
+}
+
+// Función para controlar visibilidad según zoom de ambas capas
+function updateLabelVisibility() {
+    var zoom = map.getZoom();
+
+    if (zoom >= 12 && zoom <= 22) {
+        if (!map.hasLayer(tooltipsLayerGroupCaminos)) {
+            map.addLayer(tooltipsLayerGroupCaminos);
+        }
+        if (!map.hasLayer(tooltipsLayerGroupCarreteras)) {
+            map.addLayer(tooltipsLayerGroupCarreteras);
+        }
+    } else {
+        if (map.hasLayer(tooltipsLayerGroupCaminos)) {
+            map.removeLayer(tooltipsLayerGroupCaminos);
+        }
+        if (map.hasLayer(tooltipsLayerGroupCarreteras)) {
+            map.removeLayer(tooltipsLayerGroupCarreteras);
+        }
     }
 }
-            // --- FIN DEL BLOQUE NUEVO ---
-        }
-        // Si tienes más instrucciones para labels, totalMarkers, etc., ponlas aquí:
-        labels.push(layer);
-        totalMarkers += 1;
-        // Oculta inicialmente los tooltips de la red de carreteras
-        if (map.getZoom() <= 10) {
-            layer.closeTooltip && layer.closeTooltip();
-        }
-        layer.added = true;
-        addLabel(layer, i);
-        i++;
-    } else {
-        console.warn("Capa polilínea sin geometría válida (no se procesa):", layer);
-    }
-});
-		
+
+// Inicializar etiquetas y visibilidad
+updateAllVisibleLabels();
+updateLabelVisibility();
+
+// Actualizar etiquetas y visibilidad en eventos del mapa
+map.on('moveend', updateAllVisibleLabels);
+map.on('zoomend', updateLabelVisibility);
+
+
+
+
+
+
+
+
+
+
+
+	
         // Crear tooltips solo una vez (puedes mantener tu código original para crearlos)
 // Modificando para poner direction:'right' y offset adecuado
 
