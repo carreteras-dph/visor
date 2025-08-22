@@ -7,6 +7,10 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-search@2.9.8/dist/leaflet-search.min.css" />
+<script src="https://unpkg.com/leaflet-control-search@2.9.8/dist/leaflet-search.min.js"></script>
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css">
@@ -1117,14 +1121,8 @@ const url = {"Nominatim": "https://nominatim.openstreetmap.org/search?format=geo
         function pop_PPKK100_31(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
                         <th scope="row">MATRICULA</th>\
                         <td class="visible-with-data" id="MATRICULA">' + (feature.properties['MATRICULA'] !== null ? autolinker.link(String(feature.properties['MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['distance'] !== null ? autolinker.link(String(feature.properties['distance']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">PK</th>\
@@ -1171,14 +1169,8 @@ const url = {"Nominatim": "https://nominatim.openstreetmap.org/search?format=geo
         function pop_PPKK1000_32(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
                         <th scope="row">MATRICULA</th>\
                         <td class="visible-with-data" id="MATRICULA">' + (feature.properties['MATRICULA'] !== null ? autolinker.link(String(feature.properties['MATRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['distance'] !== null ? autolinker.link(String(feature.properties['distance']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">PK</th>\
@@ -1191,6 +1183,103 @@ const url = {"Nominatim": "https://nominatim.openstreetmap.org/search?format=geo
 			});
 			layer.bindPopup(content, { maxHeight: 400 });
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Capa principal con todos los datos
+var capaPrincipal = layer_PPKK100_31;
+
+// Capa temporal para resultados filtrados por el primer buscador
+var capaFiltrada = L.layerGroup().addTo(map);
+
+// Primer control de búsqueda (por MATRÍCULA)
+var searchControl1 = new L.Control.Search({
+    layer: capaPrincipal,
+    propertyName: 'MATRICULA',
+    marker: false,
+    textPlaceholder: 'Buscar HU-XXXX o HV-XXXX',
+    position: 'topleft',
+    moveToLocation: function(latlng, title, map){
+        map.setView(latlng, 12);
+    }
+});
+
+// Segundo control de búsqueda (por PK), inicialmente busca en capaFiltrada (vacía)
+var searchControl2 = new L.Control.Search({
+    layer: capaFiltrada,
+    propertyName: 'PK',
+    marker: false,
+    textPlaceholder: 'Buscar un PK',
+    position: 'topleft',  // Posición distinta para evitar superposición
+    moveToLocation: function(latlng, title, map){
+        map.setView(latlng, 17);
+    }
+});
+
+// Manejar evento cuando se encuentra un resultado en el primer buscador
+searchControl1.on('search:locationfound', function(e) {
+    var text = e.text.toLowerCase();
+
+    // Limpiar capaFiltrada
+    capaFiltrada.clearLayers();
+
+    // Filtrar y añadir elementos con MATRÍCULA que coincidan con texto
+    capaPrincipal.eachLayer(function(layer) {
+        var props = layer.feature && layer.feature.properties;
+        if(props && props.MATRICULA && props.MATRICULA.toLowerCase().indexOf(text) > -1) {
+            capaFiltrada.addLayer(layer);
+        }
+    });
+
+    // Actualiza el segundo buscador para buscar solo en capaFiltrada
+    searchControl2.setLayer(capaFiltrada);
+
+    // Ajusta vista para mostrar resultados filtrados si hay alguno
+    if(capaFiltrada.getLayers().length > 0) {
+        map.fitBounds(capaFiltrada.getBounds());
+    }
+});
+
+// Añade controles al mapa solo una vez
+map.addControl(searchControl1);
+map.addControl(searchControl2);
+
+// Popup para segundo buscador (PK)
+searchControl2.on('search:locationfound', function(e) {
+    var props = e.layer.feature.properties;
+    var popupContent = `
+        <b>MATRÍCULA:</b> ${props.MATRICULA || ''}<br>
+        <b>PK:</b> ${props.PK || ''}
+    `;
+    e.layer.bindPopup(popupContent).openPopup();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         function style_PPKK1000_32_0() {
             return {
@@ -1581,7 +1670,7 @@ const url = {"Nominatim": "https://nominatim.openstreetmap.org/search?format=geo
             {label: '<img src="legend/REDPROVCAMINOS_27.png" /> RED PROV CAMINOS', layer: layer_REDPROVCAMINOS_27},
 		{label: '<b>CAPAS AUXILIARES</b>',  collapsed: true, selectAllCheckbox: true, children: [
 			{label: '<img src="legend/PPKK1000_32.png" /> PPKK:1000', layer: layer_PPKK1000_32},
-           		//{label: '<img src="legend/PPKK100_31.png" /> PPKK:100', layer: layer_PPKK100_31},
+           		{label: '<img src="legend/PPKK100_31.png" /> PPKK:100', layer: layer_PPKK100_31},
 			{label: '<img src="legend/LIMITACIONES_28.png" /> LIMITACIONES', layer: layer_LIMITACIONES_28},
 			{label: '<img src="legend/AFOROS_36.png" /> AFOROS', layer: cluster_AFOROS_36},
           		{label: 'CLASIF POR TRÁFICO<br /><table><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T20.png" /></td><td>T2</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T311.png" /></td><td>T31</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T412.png" /></td><td>T41</td></tr><tr><td style="text-align: center;"><img src="legend/CLASIFPORTRFICO_35_T423.png" /></td><td>T42</td></tr></table>', layer: layer_CLASIFPORTRFICO_35},
@@ -1868,29 +1957,29 @@ if (distanciaTotal < etiquetasCada) {
         // Crear tooltips solo una vez (puedes mantener tu código original para crearlos)
 // Modificando para poner direction:'right' y offset adecuado
 
-var i = 0;
-layer_PPKK100_31.eachLayer(function(layer) {
-    var texto = layer.feature.properties['PK'] !== null ?
-      '<div style="color: #000000; font-size: 7pt; font-family: Arial, sans-serif;">' + layer.feature.properties['PK'] + '</div>' : '';
-    layer.bindTooltip(texto, { permanent: true, direction: 'right', offset: [8, 0], className: 'css_PPKK100_31' });
-    labels.push(layer);
-    totalMarkers += 1;
-    layer.added = true;
-    addLabel(layer, i);
-    i++;
-});
+//var i = 0;
+//layer_PPKK100_31.eachLayer(function(layer) {
+//    var texto = layer.feature.properties['PK'] !== null ?
+//      '<div style="color: #000000; font-size: 7pt; font-family: Arial, sans-serif;">' + layer.feature.properties['PK'] + '</div>' : '';
+//    layer.bindTooltip(texto, { permanent: true, direction: 'right', offset: [8, 0], className: 'css_PPKK100_31' });
+//    labels.push(layer);
+//    totalMarkers += 1;
+//    layer.added = true;
+//    addLabel(layer, i);
+//    i++;
+//});
 
-var i = 0;
-layer_PPKK1000_32.eachLayer(function(layer) {
-    var texto = layer.feature.properties['PK'] !== null ?
-      '<div style="color: #000000; font-size: 10pt; font-family: Arial, sans-serif;">' + layer.feature.properties['PK'] + '</div>' : '';
-    layer.bindTooltip(texto, { permanent: true, direction: 'right', offset: [8, 0], className: 'css_PPKK1000_32' });
-    labels.push(layer);
-    totalMarkers += 1;
-    layer.added = true;
-    addLabel(layer, i);
-    i++;
-});
+//var i = 0;
+//layer_PPKK1000_32.eachLayer(function(layer) {
+//    var texto = layer.feature.properties['PK'] !== null ?
+//      '<div style="color: #000000; font-size: 10pt; font-family: Arial, sans-serif;">' + layer.feature.properties['PK'] + '</div>' : '';
+//    layer.bindTooltip(texto, { permanent: true, direction: 'right', offset: [8, 0], className: 'css_PPKK1000_32' });
+//    labels.push(layer);
+//    totalMarkers += 1;
+//    layer.added = true;
+//    addLabel(layer, i);
+//    i++;
+//});
 
 // Controlar visibilidad en función del zoom
 map.on('zoomend', function(){
@@ -1990,6 +2079,18 @@ map.on('zoomend', function(){
 	        }
 	    }
 		//fin
+
+ if (map.hasLayer(layer_REDPROVCAMINOS_27)) {
+	        if (map.getZoom() >= 10 && map.getZoom() <= 28) {
+	            layer_REDPROVCAMINOS_27.eachLayer(function (layer) {
+	                layer.openTooltip();
+	            });
+	        } else {
+	            layer_REDPROVCAMINOS_27.eachLayer(function (layer) {
+	                layer.closeTooltip();
+	            });
+	        }
+	    }
         });
         map.on("layeradd", function(){
             resetLabels([layer_TRMINOSMUNICIPALES_20,layer_REDESTATALAUTOVIAS_23,layer_REDESTATAL_24,layer_REDAUTONOMICA_25,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_26,layer_REDPROVCAMINOS_27,layer_REDPROVCARRETERAS_30,layer_PPKK100_31,layer_PPKK1000_32]);
