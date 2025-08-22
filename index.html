@@ -130,7 +130,7 @@
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
-        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 22}}).addTo(map);
         var measureControl = new L.Control.Measure({
             position: 'topleft',
             primaryLengthUnit: 'meters',
@@ -1088,7 +1088,7 @@ const url = {"Nominatim": "https://nominatim.openstreetmap.org/search?format=geo
         function style_PPKK100_31_0() {
             return {
                 pane: 'pane_PPKK100_31',
-                radius: 4.0,
+                radius: 3.0,
                 stroke: false,
                 fill: true,
                 fillOpacity: 1,
