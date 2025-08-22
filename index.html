@@ -1012,57 +1012,6 @@ attribution: '',
         map.addLayer(layer_REDPROVCARRETERAS_30);
         // ...existing code...
 
-// Añade el control de búsqueda para la capa de carreteras provinciales
-var searchControl = new L.Control.Search({
-    layer: layer_REDPROVCARRETERAS_30, // capa sobre la que buscar
-    propertyName: 'DPH_titularidad_MATRICULA', // campo por el que buscar
-    marker: false, // no añadir marcador extra
-    textPlaceholder: 'Buscar HU-XXXX...',
-    moveToLocation: function(latlng, title, map) {
-        map.setView(latlng, 12); // zoom al resultado
-    }
-});
-map.addControl(searchControl);
-
-// ...después de map.addControl(searchControl);
-
-searchControl.on('search:locationfound', function(e) {
-    // e.layer es la capa encontrada
-    var props = e.layer.feature.properties;
-    // Personaliza el contenido del popup con los campos que quieras mostrar
-    var popupContent = `
-        <b>MATRÍCULA:</b> ${props.DPH_titularidad_MATRICULA || ''}<br>
-        <b>DENOMINACIÓN:</b> ${props.RED_PROV_CARRETERAS_base_DENOM || ''}<br>
-    `;
-    // Centra el mapa y abre el popup
-    e.layer.bindPopup(popupContent).openPopup();
-});
-
-setTimeout(function() {
-    // Selecciona el contenedor del control de búsqueda
-    var searchControlContainer = document.querySelector('.leaflet-control-search');
-    if (searchControlContainer) {
-        // Crea el elemento del icono
-        var icon = document.createElement('i');
-        icon.className = 'fa fa-road';
-        icon.style.position = 'absolute';
-        icon.style.left = '5px';
-        icon.style.top = '50%';
-        icon.style.transform = 'translateY(-50%)';
-        icon.style.pointerEvents = 'none';
-        icon.style.color = '#444';
-        icon.style.fontSize = '17px';
-
-        // Asegura que el input tenga padding a la izquierda
-        var input = searchControlContainer.querySelector('input');
-        if (input) {
-            input.style.paddingLeft = '32px';
-            // El contenedor padre debe ser relativo para posicionar el icono
-            input.parentNode.style.position = 'relative';
-            input.parentNode.appendChild(icon);
-        }
-    }
-}, 500);
 
 const url = {"Nominatim": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
         "BAN": "https://api-adresse.data.gouv.fr/search/?"}
@@ -1212,7 +1161,7 @@ var searchControl1 = new L.Control.Search({
     textPlaceholder: 'Buscar HU-XXXX o HV-XXXX',
     position: 'topleft',
     moveToLocation: function(latlng, title, map){
-        map.setView(latlng, 12);
+        map.setView(latlng, 13);
     }
 });
 
@@ -1266,7 +1215,37 @@ searchControl2.on('search:locationfound', function(e) {
     e.layer.bindPopup(popupContent).openPopup();
 });
 
+// Función para añadir icono dentro del input de un control
+function addIconToSearchControl(control, iconClass) {
+    var container = control.getContainer(); 
+    var input = container.querySelector('input');
 
+    if (input) {
+        // Hacemos relativo el contenedor padre
+        input.parentNode.style.position = 'relative';
+
+        // Creamos el icono
+        var icon = document.createElement('i');
+        icon.className = iconClass;  // ej: "fa fa-road"
+        icon.style.position = 'absolute';
+        icon.style.left = '5px';
+        icon.style.top = '50%';
+        icon.style.transform = 'translateY(-50%)';
+        icon.style.pointerEvents = 'none';
+        icon.style.color = '#444';
+        icon.style.fontSize = '17px';
+
+        // Ajustar padding del input
+        input.style.paddingLeft = '32px';
+
+        // Insertar el icono
+        input.parentNode.appendChild(icon);
+    }
+}
+
+// Iconos diferentes para cada buscador
+addIconToSearchControl(searchControl1, 'fa fa-road');   // Para MATRÍCULA
+addIconToSearchControl(searchControl2, 'fa fa-flag');  // Para PK
 
 
 
