@@ -130,7 +130,12 @@
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
-        L.control.locate({locateOptions: {maxZoom: 22}}).addTo(map);
+        L.control.locate({
+            locateOptions: {
+                enableHighAccuracy: true,
+                maxZoom: 18
+            }
+}).addTo(map);
         var measureControl = new L.Control.Measure({
             position: 'topleft',
             primaryLengthUnit: 'meters',
