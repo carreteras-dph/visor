@@ -161,10 +161,8 @@
 
 proj4.defs('EPSG:25829', '+proj=utm +zone=29 +ellps=GRS80 +units=m +no_defs');
 
-// Definición de proyecciones UTM 29N y 30N en ETRS89
+// Definición de proyecciones UTM 29N en ETRS89
 proj4.defs('EPSG:25829', '+proj=utm +zone=29 +ellps=GRS80 +units=m +no_defs');
-proj4.defs('EPSG:25830', '+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs');
-
 map.on("click", function(e) {
   var coordsWGS84 = [e.latlng.lng, e.latlng.lat];
 
@@ -173,7 +171,7 @@ map.on("click", function(e) {
   
   var popupContent = `
     Lat/Lng (WGS84): ${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}<br>
-    ETRS89 UTM 29N: X=${coordsETRS29[0].toFixed(2)}, Y=${coordsETRS29[1].toFixed(2)}<br>
+    X/Y ETRS89 UTM29N: ${coordsETRS29[0].toFixed(2)}, ${coordsETRS29[1].toFixed(2)}<br>
   `;
 
   L.popup({
