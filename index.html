@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,6 +24,10 @@
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <link rel="stylesheet" href="css/leaflet-search.css">
         <script src="js/leaflet-search.js"></script>
+        <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+
+
         
         <style>
         html, body, #map {
@@ -161,15 +165,17 @@
 
 proj4.defs('EPSG:25829', '+proj=utm +zone=29 +ellps=GRS80 +units=m +no_defs');
 
-// Definición de proyecciones UTM 29N en ETRS89
+// Definición de proyecciones UTM 29N y 30N en ETRS89
 proj4.defs('EPSG:25829', '+proj=utm +zone=29 +ellps=GRS80 +units=m +no_defs');
+proj4.defs('EPSG:25830', '+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs');
+
 map.on("click", function(e) {
   var coordsWGS84 = [e.latlng.lng, e.latlng.lat];
 
   // Transformar a ETRS89 UTM 29N
   var coordsETRS29 = proj4('EPSG:4326', 'EPSG:25829', coordsWGS84);
   
-  var popupContent = `
+   var popupContent = `
     Lat/Lng (WGS84): <br>
 	<b>${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}</b><br><br>
     ETRS89 UTM 29N: <br>
@@ -183,6 +189,14 @@ map.on("click", function(e) {
     .setContent(popupContent)
     .openOn(map);
 });
+
+L.control.scale({
+  position: 'bottomleft',
+  imperial: false,
+  metric: true,
+  maxWidth: 150,
+  updateWhenIdle: true
+}).addTo(map);
 
 
 
