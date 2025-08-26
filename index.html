@@ -11,6 +11,8 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet-control-search@2.9.8/dist/leaflet-search.min.css" />
 <script src="https://unpkg.com/leaflet-control-search@2.9.8/dist/leaflet-search.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.3/proj4.js"></script>
+<script src="https://unpkg.com/proj4leaflet"></script>
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css">
@@ -152,6 +154,38 @@
                 map.fitBounds(bounds_group.getBounds());
             }
         }
+//L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+//  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+//  opacity: 0.5
+//}).addTo(map);
+
+proj4.defs('EPSG:25829', '+proj=utm +zone=29 +ellps=GRS80 +units=m +no_defs');
+
+// Definición de proyecciones UTM 29N y 30N en ETRS89
+proj4.defs('EPSG:25829', '+proj=utm +zone=29 +ellps=GRS80 +units=m +no_defs');
+proj4.defs('EPSG:25830', '+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs');
+
+map.on("click", function(e) {
+  var coordsWGS84 = [e.latlng.lng, e.latlng.lat];
+
+  // Transformar a ETRS89 UTM 29N
+  var coordsETRS29 = proj4('EPSG:4326', 'EPSG:25829', coordsWGS84);
+  
+  var popupContent = `
+    Lat/Lng (WGS84): ${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}<br>
+    ETRS89 UTM 29N: X=${coordsETRS29[0].toFixed(2)}, Y=${coordsETRS29[1].toFixed(2)}<br>
+  `;
+
+  L.popup({
+  closeButton: true,   // muestra botón cerrar (es true por defecto)
+})
+    .setLatLng(e.latlng)
+    .setContent(popupContent)
+    .openOn(map);
+});
+
+
+
         map.createPane('pane_IDEAndaluciaFondoOrogrficoSiose2013_0');
         map.getPane('pane_IDEAndaluciaFondoOrogrficoSiose2013_0').style.zIndex = 400;
         var layer_IDEAndaluciaFondoOrogrficoSiose2013_0 = L.WMS.layer("https://www.ideandalucia.es/wms/siose_2013", "sombreado_siose_2013", {
@@ -2130,6 +2164,8 @@ map.on('zoomend', function(){
         map.on("layerremove", function(){
             resetLabels([layer_TRMINOSMUNICIPALES_20,layer_REDESTATALAUTOVIAS_23,layer_REDESTATAL_24,layer_REDAUTONOMICA_25,layer_ZONASCONSERVACIONCARRETERASYCAMINOS_26,layer_REDPROVCAMINOS_27,layer_REDPROVCARRETERAS_30,layer_PPKK100_31,layer_PPKK1000_32]);
         });
+
+        
         </script>
     </body>
 </html>
