@@ -250,6 +250,24 @@ body.panel-open #legend { display: none; }
 .pin { position: absolute; width: 26px; height: 36px; transform: translate(-50%, -100%); }
 .pin svg { width: 26px; height: 36px; stroke: #fff; stroke-width: 1.5; fill: #e03131; }
 
+/* ---------- Street View ---------- */
+#sv { position: fixed; z-index: 940; right: 64px; bottom: 26px; width: 500px; height: 420px; background: #fff; border-radius: var(--r);
+  box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: hidden; transition: width .25s, height .25s; }
+#sv.big { width: min(64vw, 1000px); height: calc(100% - var(--top) - 40px); }
+.sv-head { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px; border-bottom: 1px solid var(--line); }
+.sv-ico { width: 18px; height: 18px; color: var(--accent); flex: none; }
+.sv-t { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; margin-right: auto; }
+.sv-t small { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#sv-frame { flex: 1; width: 100%; border: 0; background: #dfe3e8; min-height: 0; }
+.sv-ctrl { display: flex; gap: 6px; padding: 8px; justify-content: center; flex-wrap: wrap; }
+.sv-ctrl button { height: 36px; min-width: 44px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-size: 15px; }
+.sv-ctrl button:hover:not(:disabled) { background: var(--soft); }
+.sv-ctrl button:disabled { opacity: .35; cursor: default; }
+.sv-note { margin: 0; padding: 0 12px 8px; font-size: 11.5px; color: var(--muted); line-height: 1.35; }
+.sv-arrow { position: absolute; width: 96px; height: 96px; transform-origin: 50% 50%; filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); }
+.sv-arrow svg { width: 96px; height: 96px; stroke: none; overflow: visible; }
+body.sv-open #legend { display: none; }
+
 /* ---------- móvil ---------- */
 .desk { }
 @media (max-width: 720px) {
@@ -278,6 +296,12 @@ body.panel-open #legend { display: none; }
   .sheet-handle::after { content: ""; position: absolute; left: 50%; top: 8px; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: #cfd4da; }
   #layers .sheet-handle { top: -6px; margin-top: -6px; }
   #measure-bar { bottom: calc(16px + var(--safe-b)); }
+  #sv, #sv.big { left: 0; right: 0; bottom: 0; width: auto; height: 52vh; border-radius: 16px 16px 0 0; padding-bottom: var(--safe-b); }
+  .sv-note { display: none; }
+  .sv-ctrl { padding: 6px; gap: 5px; }
+  .sv-ctrl button { padding: 0 8px; font-size: 14px; }
+  body.sv-open #tools { top: calc(var(--top) + 8px); }
+  body.sv-open #b-home, body.sv-open #b-wmsq, body.sv-open #b-measure { display: none; }
   .kv { grid-template-columns: 8.5em 1fr; }
   body.sheet-open .leaflet-control-attribution { display: none; }
   .leaflet-control-attribution { font-size: 10px; max-width: calc(100vw - 8px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

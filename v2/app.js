@@ -331,7 +331,7 @@ async function buildBase() {
     w: (f, z) => baseW(z) * 0.75, color: () => (themed() ? '#a9cdf3' : '#4a9bea'), casing: () => (themed() ? '#7f9fbf' : '#0d4a8f'),
     click: (f, ll) => showCamino(f, ll) });
   L_.dph = lineGroup(car, { pane: 'p-dph',
-    w: (f, z) => baseW(z), color: dphColor, casing: dphCasing, click: (f, ll) => showRoad(f.properties.mat, ll, f) });
+    w: (f, z) => baseW(z), color: dphColor, casing: dphCasing, click: (f, ll) => roadClick(f, ll) });
   L_.inter = lineGroup(inter, { pane: 'p-inter',
     w: (f, z) => baseW(z) * 0.65, color: () => '#ffcc1a', casing: () => '#6b5200', click: (f, ll) => showInter(f, ll) });
   L_.provincia = L.geoJSON(prov, { renderer: RC, interactive: false,
@@ -373,7 +373,12 @@ async function buildTheme() {
   themeLayers.addLayer(lineGroup(geo, { pane: 'p-theme',
     w: (f, z) => baseW(z) * (st.widthByClass ? 0.65 + 0.13 * Math.max(0, clsIndex(st.cls, f.properties[cls.key])) : 1.05),
     color: f => clsColor(st.cls, f.properties[cls.key]), casing: () => 'rgba(20,24,28,.75)',
-    click: (f, ll) => showRoad(f.properties.mat, ll, f) }));
+    click: (f, ll) => roadClick(f, ll) }));
+}
+/** Clic en una carretera provincial: ficha y, si Street View está abierto, lo lleva a ese punto. */
+function roadClick(f, ll) {
+  showRoad(f.properties.mat, ll, f);
+  if (SV.isOpen()) { const r = pkOnSegment(f, ll); if (r.pk != null) SV.openRoad(f.properties.mat, r.pk, true); }
 }
 
 async function applyStyle(id, opts = {}) {
@@ -702,8 +707,8 @@ const ICON = {
   ext: '<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>',
   copy: '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></svg>'
 };
-const extLinks = ll => `
-  <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}">${ICON.sv}Street View</a>
+const extLinks = (ll, road) => `
+  <button class="btn" ${road ? `data-sv-road="${esc(road.mat)}|${Math.round(road.pk)}"` : `data-sv="${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}"`}>${ICON.sv}Street View</button>
   <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}">${ICON.ext}Google Maps</a>
   <button class="btn" data-copy="${ll.lat.toFixed(6)}, ${ll.lng.toFixed(6)}">${ICON.copy}Copiar coordenadas</button>`;
 pbody.addEventListener('click', e => {
@@ -715,6 +720,10 @@ pbody.addEventListener('click', e => {
   if (wt) { const it = WMS_ALL.find(w => w.id === wt.dataset.wmsToggle), on = !S.wms[it.id]; setWms(it, on); document.getElementById('wms-' + it.id).checked = on; showWmsInfo(it.id); }
   const go = e.target.closest('[data-go]');
   if (go) { const [mat, pk] = go.dataset.go.split('|'); gotoPK(mat, +pk); }
+  const sv = e.target.closest('[data-sv]');
+  if (sv) { const [a, b] = sv.dataset.sv.split(',').map(Number); SV.openAt(L.latLng(a, b)); }
+  const svr = e.target.closest('[data-sv-road]');
+  if (svr) { const [mat, pk] = svr.dataset.svRoad.split('|'); SV.openRoad(mat, +pk); }
 });
 function fitFeatures(fs) {
   if (!fs.length) return;
@@ -751,7 +760,7 @@ async function showRoad(mat, ll, feat, limFeat, pkFix) {
     <div class="sec"><h4>Limitaciones en la ${esc(mat)}</h4><div id="lims"><span class="spin"></span></div></div>
     <div class="sec"><h4>Estaciones de aforo</h4><div id="afs"><span class="spin"></span></div></div>
     ${coordsSec(at)}
-    <div class="actions"><button class="btn primary" data-fit="${esc(mat)}">${ICON.fit}Ver carretera completa</button>${extLinks(at)}</div>`);
+    <div class="actions"><button class="btn primary" data-fit="${esc(mat)}">${ICON.fit}Ver carretera completa</button>${extLinks(at, pk != null ? { mat, pk } : null)}</div>`);
   const [pav, anc, tra, lim, afo] = await Promise.all(['pavimento', 'anchura', 'trafico', 'limitaciones', 'aforos'].map(n => load(n).catch(() => null)));
   if (!document.getElementById('here')) return;
   const sp = segAt(pav, mat, pk), sa = segAt(anc, mat, pk), stf = segAt(tra, mat, pk);
@@ -851,6 +860,7 @@ function showPoint(ll) {
 map.on('click', e => {
   if (measuring) return addMeasure(e.latlng);
   if (wmsQuery) return queryWms(e.latlng);
+  if (SV.isOpen()) return SV.openAt(e.latlng);
   if (S.coords) return showPoint(e.latlng);
   if (!panel.hidden) closePanel();
 });
@@ -877,6 +887,115 @@ async function gotoPK(mat, pk) {
   map.setView(ll, Math.max(Z(), 15), { animate: false });
   showRoad(mat, ll, f, null, pk);
 }
+
+/* ================================================================
+   Street View insertado (gratuito)
+   ----------------------------------------------------------------
+   Con clave: Maps Embed API (gratis e ilimitada; requiere clave de Google Cloud).
+   Sin clave: modo de inserción clásico de Google Maps (sin clave, no documentado oficialmente).
+   La ventana insertada no informa de hacia dónde mira el usuario: la flecha del mapa sigue
+   a los botones del visor (girar, avanzar por la carretera, sentido contrario).
+   ================================================================ */
+const GMAPS_EMBED_KEY = '';   // ← pega aquí tu clave de Maps Embed API (opcional)
+const SV = (() => {
+  const el = $('#sv'), frame = $('#sv-frame'), title = $('#sv-title'), sub = $('#sv-sub');
+  const st = { open: false, ll: null, heading: 0, mat: null, pk: null, dir: 1 };
+  let marker = null, reloadT = 0;
+  const norm360 = h => ((h % 360) + 360) % 360;
+  function bearing(a, b) {
+    const y = Math.sin((b.lng - a.lng) * DEG) * Math.cos(b.lat * DEG);
+    const x = Math.cos(a.lat * DEG) * Math.sin(b.lat * DEG) - Math.sin(a.lat * DEG) * Math.cos(b.lat * DEG) * Math.cos((b.lng - a.lng) * DEG);
+    return norm360(Math.atan2(y, x) / DEG);
+  }
+  function url() {
+    const { lat, lng } = st.ll, h = Math.round(st.heading);
+    return GMAPS_EMBED_KEY
+      ? `https://www.google.com/maps/embed/v1/streetview?key=${encodeURIComponent(GMAPS_EMBED_KEY)}&location=${lat.toFixed(6)},${lng.toFixed(6)}&heading=${h}&pitch=0&fov=90&language=es`
+      : `https://maps.google.com/maps?layer=c&cbll=${lat.toFixed(6)},${lng.toFixed(6)}&cbp=12,${h},0,0,0&hl=es&source=embed&output=svembed`;
+  }
+  const extUrl = () => `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${st.ll.lat.toFixed(6)},${st.ll.lng.toFixed(6)}&heading=${Math.round(st.heading)}`;
+  const arrowHtml = h => `<span class="sv-arrow" style="transform:translate(-50%,-50%) rotate(${h}deg)"><svg viewBox="0 0 60 60">
+    <path d="M30 30 L12 2 A34 34 0 0 1 48 2 Z" fill="rgba(31,111,235,.32)" stroke="#1f6feb" stroke-width="1.2"/>
+    <path d="M30 13 L37 28 L30 25 L23 28 Z" fill="#1f6feb" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="30" cy="30" r="5.5" fill="#1f6feb" stroke="#fff" stroke-width="2.5"/></svg></span>`;
+  function draw() {
+    const icon = L.divIcon({ className: 'lbl-ico', iconSize: [0, 0], html: arrowHtml(st.heading) });
+    if (!marker) marker = L.marker(st.ll, { icon, pane: 'p-labels', interactive: false, keyboard: false }).addTo(map);
+    else { marker.setLatLng(st.ll); marker.setIcon(icon); }
+    if (!map.getBounds().pad(-0.15).contains(st.ll)) map.panTo(st.ll);
+  }
+  function render(reload = true) {
+    title.textContent = st.mat ? `${st.mat} · PK ${fmtPK(st.pk)}` : 'Street View';
+    sub.textContent = st.mat ? `Sentido ${st.dir > 0 ? 'creciente' : 'decreciente'} de PK · rumbo ${Math.round(st.heading)}°` : `Rumbo ${Math.round(st.heading)}°`;
+    $('#sv-ext').href = extUrl();
+    el.querySelectorAll('[data-road]').forEach(b => (b.disabled = !st.mat));
+    draw();
+    if (reload) { clearTimeout(reloadT); reloadT = setTimeout(() => (frame.src = url()), 250); }
+  }
+  function show() {
+    if (st.open) return;
+    st.open = true; el.hidden = false; document.body.classList.add('sv-open');
+    if (measuring) setMeasuring(false);
+    if (isMobile()) { closePanel(); closeLayers(); }
+    setTimeout(() => map.invalidateSize(), 50);
+  }
+  function close() {
+    st.open = false; el.hidden = true; frame.src = 'about:blank'; document.body.classList.remove('sv-open');
+    if (marker) { map.removeLayer(marker); marker = null; }
+    setTimeout(() => map.invalidateSize(), 50);
+  }
+  // Punto y rumbo sobre el eje de la carretera en un PK
+  function roadPose(mat, pk) {
+    const fs = (DATA.carreteras ? DATA.carreteras.features : []).filter(f => f.properties.mat === mat);
+    if (!fs.length) return null;
+    const max = Math.max(...fs.map(f => f.properties.fin));
+    pk = Math.max(0, Math.min(max, pk));
+    const f = fs.find(f => pk >= f.properties.ini && pk <= f.properties.fin) || fs[0];
+    const p = f.properties, tot = geomLength(f.geometry), k = tot / ((p.fin - p.ini) || 1);
+    const along = (pk - p.ini) * k;
+    const a = pointAt(f.geometry, Math.max(0, along - 8)), b = pointAt(f.geometry, Math.min(tot, along + 8));
+    return { ll: pointAt(f.geometry, along), pk, heading: a && b ? bearing(a, b) : 0, max };
+  }
+  function openRoad(mat, pk, keepDir) {
+    const pose = roadPose(mat, pk); if (!pose) return;
+    if (!keepDir) st.dir = 1;
+    Object.assign(st, { mat, pk: pose.pk, ll: pose.ll, heading: norm360(pose.heading + (st.dir < 0 ? 180 : 0)) });
+    show(); render();
+  }
+  function openAt(ll) {
+    // si el punto está a menos de 25 m de una carretera provincial, se engancha a ella
+    const n = DATA.carreteras ? nearestRoad(ll) : null;
+    if (n && n.d < 25 && n.pk != null) return openRoad(n.f.properties.mat, n.pk, true);
+    Object.assign(st, { mat: null, pk: null, ll, heading: st.open ? st.heading : 0 });
+    show(); render();
+  }
+  function step(m) {
+    if (!st.mat) return;
+    const pose = roadPose(st.mat, st.pk + m * st.dir);
+    if (!pose) return;
+    if (pose.pk === st.pk) return toast(st.dir > 0 ? 'Fin de la carretera' : 'Inicio de la carretera');
+    Object.assign(st, { pk: pose.pk, ll: pose.ll, heading: norm360(pose.heading + (st.dir < 0 ? 180 : 0)) });
+    render();
+  }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const a = b.dataset.a;
+    if (a === 'close') close();
+    else if (a === 'left') { st.heading = norm360(st.heading - 45); render(); }
+    else if (a === 'right') { st.heading = norm360(st.heading + 45); render(); }
+    else if (a === 'fwd') step(+50);
+    else if (a === 'back') step(-50);
+    else if (a === 'flip') { st.heading = norm360(st.heading + 180); if (st.mat) st.dir *= -1; render(); }
+    else if (a === 'size') { el.classList.toggle('big'); setTimeout(() => map.invalidateSize(), 260); }
+    else if (a === 'ficha' && st.mat) showRoad(st.mat, st.ll, null, null, st.pk);
+  });
+  document.addEventListener('keydown', e => {
+    if (!st.open || /input|textarea/i.test(document.activeElement.tagName)) return;
+    const k = { ArrowUp: () => step(+50), ArrowDown: () => step(-50), ArrowLeft: () => { st.heading = norm360(st.heading - 45); render(); }, ArrowRight: () => { st.heading = norm360(st.heading + 45); render(); } }[e.key];
+    if (k) { e.preventDefault(); k(); }
+  });
+  return { openRoad, openAt, close, isOpen: () => st.open };
+})();
 
 /* ================================================================
    Medición

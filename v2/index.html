@@ -70,6 +70,26 @@
     <div id="wms"></div>
   </aside>
 
+  <section id="sv" hidden aria-label="Street View">
+    <div class="sv-head">
+      <svg class="sv-ico" viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M9 21v-6H7v-4a5 5 0 0 1 10 0v4h-2v6z"/></svg>
+      <div class="sv-t"><b id="sv-title">Street View</b><small id="sv-sub"></small></div>
+      <a id="sv-ext" class="icon-btn" target="_blank" rel="noopener" title="Abrir en Google Maps" aria-label="Abrir en Google Maps"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg></a>
+      <button class="icon-btn desk" data-a="size" title="Ampliar / reducir" aria-label="Ampliar o reducir"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+      <button class="icon-btn" data-a="close" title="Cerrar" aria-label="Cerrar Street View"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <iframe id="sv-frame" title="Street View" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="sv-ctrl">
+      <button data-a="back" data-road title="Retroceder 50 m (↓)">▼ 50 m</button>
+      <button data-a="left" title="Girar 45° a la izquierda (←)">⟲</button>
+      <button data-a="flip" title="Mirar en sentido contrario">⇅</button>
+      <button data-a="right" title="Girar 45° a la derecha (→)">⟳</button>
+      <button data-a="fwd" data-road title="Avanzar 50 m (↑)">▲ 50 m</button>
+      <button data-a="ficha" data-road title="Ficha de la carretera en este PK">Ficha</button>
+    </div>
+    <p class="sv-note">La flecha del mapa sigue a estos botones. Si giras arrastrando dentro de la imagen, la flecha no se entera. Con la ventana abierta, pulsa el mapa o una carretera para llevar la vista allí.</p>
+  </section>
+
   <div id="measure-bar" hidden>
     <span id="measure-out">Toca el mapa para medir</span>
     <button id="m-undo">Deshacer</button>
