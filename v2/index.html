@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="description" content="Visor de la red de carreteras y caminos de la Diputación Provincial de Huelva">
+  <title>Red de Carreteras y Caminos · Diputación de Huelva</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div id="map" aria-label="Mapa"></div>
+
+  <header id="topbar">
+    <a class="brand" href="./" title="Inicio">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#ffcc1a"/><path d="M13 4h6l5 24h-5l-.6-4h-4.8l-.6 4H8z" fill="#222"/><path d="M15.4 8h1.2l.4 4h-2zM14.7 15h2.6l.4 5h-3.4z" fill="#ffcc1a"/></svg>
+      <span><b>Carreteras DPH</b><small>Diputación de Huelva</small></span>
+    </a>
+    <div class="search" role="search">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+      <input id="q" type="search" autocomplete="off" spellcheck="false"
+             placeholder="Buscar carretera, PK, municipio…" aria-label="Buscar"
+             title="Ejemplos: HU-3101 · HU-3101 2+500 · Aracena · 37.25, -6.95 · 684622 4131487">
+      <button id="q-clear" class="icon-btn" aria-label="Borrar búsqueda" hidden>
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <ul id="results" role="listbox" hidden></ul>
+    </div>
+    <nav id="styles" class="chips" aria-label="Estilo del mapa"></nav>
+  </header>
+
+  <div id="tools">
+    <button class="fab desk" id="b-zin" aria-label="Acercar" title="Acercar"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="fab desk" id="b-zout" aria-label="Alejar" title="Alejar"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+    <button class="fab" id="b-layers" aria-label="Capas y mapa base" title="Capas y mapa base"><svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></button>
+    <button class="fab" id="b-locate" aria-label="Mi ubicación" title="Mi ubicación"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+    <button class="fab" id="b-measure" aria-label="Medir distancias" title="Medir distancias"><svg viewBox="0 0 24 24"><path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/></svg></button>
+    <button class="fab" id="b-home" aria-label="Ver toda la provincia" title="Ver toda la provincia"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  </div>
+
+  <aside id="legend" class="card collapsed-m" aria-label="Leyenda">
+    <button class="legend-head" id="legend-toggle" aria-expanded="true">
+      <span id="legend-title">Leyenda</span>
+      <svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <div id="legend-body"></div>
+  </aside>
+
+  <aside id="panel" class="sheet" aria-live="polite" hidden>
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <button class="icon-btn close" id="panel-close" aria-label="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div id="panel-body"></div>
+  </aside>
+
+  <aside id="layers" class="sheet" hidden aria-label="Capas">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <button class="icon-btn close" id="layers-close" aria-label="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h2>Mapa base</h2>
+    <div id="basemaps" class="basemaps"></div>
+    <label class="switch"><input type="checkbox" id="grey"> <span>Fondo en gris (estilo OpenRailwayMap)</span></label>
+    <label class="range">Opacidad del fondo <input type="range" id="bm-opacity" min="20" max="100" step="5"></label>
+    <h2>Capas</h2>
+    <div id="overlays"></div>
+    <h2>Servicios WMS</h2>
+    <div id="wms"></div>
+  </aside>
+
+  <div id="measure-bar" hidden>
+    <span id="measure-out">Toca el mapa para medir</span>
+    <button id="m-undo">Deshacer</button>
+    <button id="m-clear">Borrar</button>
+    <button id="m-close" class="primary">Terminar</button>
+  </div>
+
+  <div id="toast" role="status" hidden></div>
+  <div id="loading" hidden><span></span>Cargando…</div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
