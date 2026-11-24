@@ -36,6 +36,17 @@ Pasa de ~37 MB a ~3 MB. Al abrir el visor solo se descargan ~0,9 MB; el resto de
 - Rótulos de matrícula sin solapes, PK cada km (zoom ≥ 13) y cada 100 m (zoom ≥ 16), medición de distancias y ubicación GPS.
 - La URL guarda la vista y el estilo: `#13/37.31/-6.92/imd`.
 
+## Fuente CCRIGE
+
+Las matrículas usan la fuente CCRIGE. Copia el archivo en `v2/fonts/` con el nombre `CCRIGE.woff2`, `CCRIGE.ttf` u `CCRIGE.otf`.
+Si la fuente está instalada en el equipo, se usa sin el archivo. Si no, se ve Arial Narrow.
+
+## Botones laterales
+
+- **XY**: activa o desactiva que al pulsar el mapa se muestren las coordenadas. Por defecto está desactivado.
+- **(i) Consultar WMS**: con el botón activo, al pulsar el mapa se consulta qué hay en ese punto en los WMS encendidos (GetFeatureInfo).
+- En **Capas → Servicios WMS**, el botón (i) de cada servicio muestra organismo, capa, URL, leyenda y enlace a GetCapabilities.
+
 ## Revisar
 
 - Significado de los códigos de pavimento `A` y `R` (en `app.js`, constante `CLS.pav`). He puesto "Aglomerado" y "Riego".

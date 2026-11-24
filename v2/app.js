@@ -205,29 +205,29 @@ const OVERLAYS = [
 ];
 
 const WMS = [
-  { grp: 'Medio ambiente (REDIAM)', items: [
+  { grp: 'Medio ambiente (REDIAM)', org: 'Junta de Andalucía · Red de Información Ambiental (REDIAM)', items: [
     { id: 'rn2000', label: 'Red Natura 2000', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'red_natura_2000' },
     { id: 'enp', label: 'Espacios Naturales Protegidos', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'eennpp' },
     { id: 'vvpp', label: 'Vías pecuarias', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_Inventario_VVPP', layers: 'REDIAM' },
     { id: 'ramsar', label: 'Humedales Ramsar', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'humedales_ramsar' },
     { id: 'biosfera', label: 'Reservas de la Biosfera', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'reservas_biosfera' },
     { id: 'geoparques', label: 'Geoparques', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'geoparques' }] },
-  { grp: 'Hidrografía (IGN)', items: [
+  { grp: 'Hidrografía (IGN)', org: 'Instituto Geográfico Nacional · IDEE (INSPIRE)', items: [
     { id: 'hred', label: 'Red hidrográfica', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.Network' },
     { id: 'hmasas', label: 'Masas de agua', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.PhysicalWaters.Waterbodies' },
     { id: 'hhum', label: 'Humedales', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.PhysicalWaters.Wetland' },
     { id: 'hlim', label: 'Límite tierra-agua', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.PhysicalWaters.LandWaterBoundary' }] },
   { grp: 'Otros', items: [
-    { id: 'catastro', label: 'Catastro', url: 'https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', layers: 'Catastro' },
-    { id: 'dpmt', label: 'Dominio Público Marítimo-Terrestre', url: 'https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx', layers: 'AM.CoastalZoneManagementArea' }] }
+    { id: 'catastro', label: 'Catastro', org: 'Dirección General del Catastro', url: 'https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', layers: 'Catastro' },
+    { id: 'dpmt', label: 'Dominio Público Marítimo-Terrestre', org: 'MITECO · Dirección General de la Costa y el Mar', url: 'https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx', layers: 'AM.CoastalZoneManagementArea' }] }
 ];
 
 /* ---------- estado persistente ---------- */
-const DEF = { style: 'red', base: 'osm', grey: true, opacity: 100, ov: Object.fromEntries(OVERLAYS.map(o => [o.id, o.def])), wms: {} };
+const DEF = { style: 'red', base: 'osm', grey: true, opacity: 100, coords: false, ov: Object.fromEntries(OVERLAYS.map(o => [o.id, o.def])), wms: {} };
 const S = Object.assign({}, DEF, store.get('dph-visor-v2', {}));
 S.ov = Object.assign({}, DEF.ov, S.ov || {});
 S.wms = S.wms || {};
-const save = () => store.set('dph-visor-v2', { base: S.base, grey: S.grey, opacity: S.opacity, ov: S.ov, wms: S.wms, style: S.style });
+const save = () => store.set('dph-visor-v2', { coords: S.coords, base: S.base, grey: S.grey, opacity: S.opacity, ov: S.ov, wms: S.wms, style: S.style });
 
 /* ================================================================
    Mapa
@@ -304,7 +304,7 @@ const afLayer = L.layerGroup().addTo(map);
 const markLayer = L.layerGroup().addTo(map);
 
 const NET = {
-  autovia: { fill: '#e8455a', cas: '#7a1020', k: 1.25, sh: 'atv', name: 'Autovía' },
+  autovia: { fill: '#1d5fbf', cas: '#0b2f66', k: 1.25, sh: 'atv', name: 'Autovía estatal' },
   estatal: { fill: '#f07a3a', cas: '#8a2a00', k: 1.05, sh: 'est', name: 'Red estatal' },
   autonomica: { fill: '#5cb85c', cas: '#1d5b2a', k: 0.9, sh: 'aut', name: 'Red autonómica' }
 };
@@ -545,6 +545,55 @@ function setBase(id, userGrey) {
   $('#grey').checked = !!S.grey;
 }
 const wmsLayers = {};
+const WMS_ALL = WMS.flatMap(g => g.items.map(it => ({ ...it, org: it.org || g.org, grp: g.grp })));
+const wmsUrl = (it, params) => it.url + (it.url.includes('?') ? (/[?&]$/.test(it.url) ? '' : '&') : '?') + new URLSearchParams(params).toString();
+const capsUrl = it => wmsUrl(it, { SERVICE: 'WMS', REQUEST: 'GetCapabilities' });
+const legendUrl = it => wmsUrl(it, { SERVICE: 'WMS', VERSION: '1.1.1', REQUEST: 'GetLegendGraphic', FORMAT: 'image/png', LAYER: it.layers.split(',')[0] });
+function showWmsInfo(id) {
+  const it = WMS_ALL.find(w => w.id === id); if (!it) return;
+  markLayer.clearLayers(); hiLayer.clearLayers();
+  openPanel(`<div class="ph"><div><h3>${esc(it.label)}</h3><p>Servicio WMS · ${esc(it.grp)}</p></div></div>
+    <div class="sec"><dl class="kv"><dt>Organismo</dt><dd>${esc(it.org || '—')}</dd>
+      <dt>Capa</dt><dd class="coord">${esc(it.layers)}</dd>
+      <dt>URL</dt><dd class="coord" style="overflow-wrap:anywhere">${esc(it.url)}</dd>
+      <dt>Estado</dt><dd>${S.wms[it.id] ? 'Activada' : 'Desactivada'}</dd></dl></div>
+    <div class="sec"><h4>Leyenda</h4><img class="wms-legend" src="${esc(legendUrl(it))}" alt="Leyenda de ${esc(it.label)}"
+      onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'muted',textContent:'El servicio no ofrece leyenda.'}))"></div>
+    <div class="actions">
+      <button class="btn primary" data-wms-toggle="${esc(it.id)}">${S.wms[it.id] ? 'Desactivar' : 'Activar'} capa</button>
+      <a class="btn" target="_blank" rel="noopener" href="${esc(capsUrl(it))}">${ICON.ext}GetCapabilities</a>
+    </div>
+    <p class="lg-note">Para consultar qué hay en un punto, activa la capa y usa el botón <b>Consultar WMS</b> (i) de la derecha.</p>`);
+}
+/* Modo consulta: GetFeatureInfo de los WMS activos en el punto pulsado */
+let wmsQuery = false;
+function setWmsQuery(on) {
+  wmsQuery = on; $('#b-wmsq').classList.toggle('on', on);
+  map.getContainer().style.cursor = on ? 'help' : '';
+  if (on) {
+    if (measuring) setMeasuring(false);
+    const n = WMS_ALL.filter(w => S.wms[w.id]).length;
+    toast(n ? 'Pulsa en el mapa para consultar ' + n + (n > 1 ? ' servicios WMS' : ' servicio WMS') : 'Activa algún servicio WMS en Capas y pulsa el mapa', 3500);
+  }
+}
+function featureInfoUrl(it, ll) {
+  const res = 360 / (256 * 2 ** Z()), half = 50 * res;
+  return wmsUrl(it, { SERVICE: 'WMS', VERSION: '1.1.1', REQUEST: 'GetFeatureInfo', LAYERS: it.layers, QUERY_LAYERS: it.layers, STYLES: '',
+    SRS: 'EPSG:4326', BBOX: [ll.lng - half, ll.lat - half, ll.lng + half, ll.lat + half].map(v => v.toFixed(7)).join(','),
+    WIDTH: 101, HEIGHT: 101, X: 50, Y: 50, INFO_FORMAT: 'text/html', FEATURE_COUNT: 10, FORMAT: 'image/png' });
+}
+function queryWms(ll) {
+  const act = WMS_ALL.filter(w => S.wms[w.id]);
+  pin(ll); hiLayer.clearLayers();
+  openPanel(`<div class="ph"><div><h3>Consulta WMS</h3><p>${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}</p></div></div>` +
+    (act.length ? act.map(it => {
+      const u = featureInfoUrl(it, ll);
+      return `<div class="sec"><h4>${esc(it.label)}</h4><iframe class="wms-fi" src="${esc(u)}" title="${esc(it.label)}" loading="lazy" referrerpolicy="no-referrer"></iframe>
+        <a class="lg-note" target="_blank" rel="noopener" href="${esc(u)}">Abrir respuesta en una pestaña nueva</a></div>`;
+    }).join('') : '<p class="muted">No hay servicios WMS activos. Actívalos en <b>Capas → Servicios WMS</b>.</p>') +
+    `<p class="lg-note">Si un recuadro sale vacío, en ese punto no hay elementos de esa capa o el servicio no admite la consulta.</p>`);
+}
+$('#b-wmsq').onclick = () => setWmsQuery(!wmsQuery);
 function setWms(it, on) {
   S.wms[it.id] = on; save();
   if (!wmsLayers[it.id]) wmsLayers[it.id] = L.tileLayer.wms(it.url, { layers: it.layers, format: 'image/png', transparent: true, pane: 'p-wms', opacity: 0.85, maxZoom: 20 });
@@ -569,7 +618,11 @@ function renderLegend() {
     const n = new Set(DATA.carreteras.features.map(f => f.properties.mat)).size;
     h += `<div class="lg">${lineSw('#ffcc1a', '#6b5200', 7)}Carreteras provinciales<span class="v">${fmtN(tot / 1000)} km</span></div>`;
     h += `<div class="lg-note" style="margin:0 0 4px 39px">${n} carreteras · titularidad DPH</div>`;
-    if (S.ov.caminos) h += `<div class="lg">${lineSw('#4a9bea', '#0d4a8f', 5)}Caminos provinciales</div>`;
+    if (S.ov.caminos && DATA.caminos) {
+      const cf = DATA.caminos.features, ckm = cf.reduce((s, f) => s + (f.properties.lt || 0), 0), cn = new Set(cf.map(f => f.properties.mat)).size;
+      h += `<div class="lg">${lineSw('#4a9bea', '#0d4a8f', 5)}Caminos provinciales<span class="v">${fmtN(ckm / 1000)} km</span></div>`;
+      h += `<div class="lg-note" style="margin:0 0 4px 39px">${cn} caminos · titularidad DPH</div>`;
+    }
     if (S.ov.inter) h += `<div class="lg">${lineSw('#ffcc1a', '#6b5200', 4)}Intersecciones</div>`;
     if (S.ov.otras) Object.values(NET).forEach(n => (h += `<div class="lg">${lineSw(n.fill, n.cas, n === NET.autovia ? 7 : 5)}${n.name}</div>`));
   } else if (S.style === 'limitaciones' && DATA.limitaciones) {
@@ -642,6 +695,7 @@ const coordsHtml = ll => {
   return `<dl class="kv"><dt>WGS84</dt><dd class="coord">${ll.lat.toFixed(6)}, ${ll.lng.toFixed(6)}</dd>
     <dt>ETRS89 UTM 29N</dt><dd class="coord">X ${fmtN(u.x, 2)}<br>Y ${fmtN(u.y, 2)}</dd></dl>`;
 };
+const coordsSec = ll => S.coords ? `<div class="sec"><h4>Coordenadas</h4>${coordsHtml(ll)}</div>` : '';
 const ICON = {
   fit: '<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
   sv: '<svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M9 21v-6H7v-4a5 5 0 0 1 10 0v4h-2v6z"/></svg>',
@@ -657,6 +711,8 @@ pbody.addEventListener('click', e => {
   if (c) { navigator.clipboard?.writeText(c.dataset.copy).then(() => toast('Copiado'), () => toast(c.dataset.copy, 5000)); }
   const fit = e.target.closest('[data-fit]');
   if (fit) { const fs = DATA.carreteras.features.filter(f => f.properties.mat === fit.dataset.fit); fitFeatures(fs); }
+  const wt = e.target.closest('[data-wms-toggle]');
+  if (wt) { const it = WMS_ALL.find(w => w.id === wt.dataset.wmsToggle), on = !S.wms[it.id]; setWms(it, on); document.getElementById('wms-' + it.id).checked = on; showWmsInfo(it.id); }
   const go = e.target.closest('[data-go]');
   if (go) { const [mat, pk] = go.dataset.go.split('|'); gotoPK(mat, +pk); }
 });
@@ -694,7 +750,7 @@ async function showRoad(mat, ll, feat, limFeat, pkFix) {
     <div class="sec"><h4>En este punto${pk == null ? '' : ' · PK ' + fmtPK(pk)}</h4><div id="here"><span class="spin"></span></div></div>
     <div class="sec"><h4>Limitaciones en la ${esc(mat)}</h4><div id="lims"><span class="spin"></span></div></div>
     <div class="sec"><h4>Estaciones de aforo</h4><div id="afs"><span class="spin"></span></div></div>
-    <div class="sec"><h4>Coordenadas</h4>${coordsHtml(at)}</div>
+    ${coordsSec(at)}
     <div class="actions"><button class="btn primary" data-fit="${esc(mat)}">${ICON.fit}Ver carretera completa</button>${extLinks(at)}</div>`);
   const [pav, anc, tra, lim, afo] = await Promise.all(['pavimento', 'anchura', 'trafico', 'limitaciones', 'aforos'].map(n => load(n).catch(() => null)));
   if (!document.getElementById('here')) return;
@@ -736,20 +792,20 @@ async function showCamino(f, ll) {
   openPanel(`<div class="ph">${shield(p.mat, 'cam')}<div><h3>${esc(p.den || p.mat)}</h3><p>Camino provincial</p></div></div>
     <div class="kpis"><div class="kpi"><small>PK aprox.</small><b>${n && n.d < 150 ? fmtPK(n.pk) : '—'}</b></div>
     <div class="kpi"><small>Longitud</small><b>${fmtLen(p.lt || pr.total)}</b></div><div class="kpi"><small>Red</small><b>DPH</b></div></div>
-    <div class="sec"><h4>Coordenadas</h4>${coordsHtml(at)}</div><div class="actions">${extLinks(at)}</div>`);
+    ${coordsSec(at)}<div class="actions">${extLinks(at)}</div>`);
 }
 function showOther(f, ll) {
   const p = f.properties, n = NET[p.red], pr = projectOn(f.geometry, ll), at = L.latLng(pr.lat, pr.lng);
   pin(at); highlight([f]);
   openPanel(`<div class="ph">${shield(p.mat || '?', n.sh)}<div><h3>${esc(n.name)}</h3><p>${esc(p.tit || '')}</p></div></div>
     <div class="sec"><dl class="kv"><dt>Origen</dt><dd>${esc(p.ori || '—')}</dd><dt>Final</dt><dd>${esc(p.fin_ || '—')}</dd></dl></div>
-    <div class="sec"><h4>Coordenadas</h4>${coordsHtml(at)}</div><div class="actions">${extLinks(at)}</div>`);
+    ${coordsSec(at)}<div class="actions">${extLinks(at)}</div>`);
 }
 function showInter(f, ll) {
   const p = f.properties; pin(ll); highlight([f]);
   openPanel(`<div class="ph">${shield(p.mat || '?')}<div><h3>Intersección</h3><p>${esc(p.ori || '?')} – ${esc(p.fin_ || '?')}</p></div></div>
     <div class="sec"><dl class="kv"><dt>Longitud</dt><dd>${p.lt != null ? fmtN(p.lt, 3) + ' km' : '—'}</dd></dl></div>
-    <div class="sec"><h4>Coordenadas</h4>${coordsHtml(ll)}</div><div class="actions">${extLinks(ll)}</div>`);
+    ${coordsSec(ll)}<div class="actions">${extLinks(ll)}</div>`);
 }
 function showAforo(f) {
   const p = f.properties, ll = L.latLng(f.geometry.coordinates[1], f.geometry.coordinates[0]); pin(ll); hiLayer.clearLayers();
@@ -757,12 +813,12 @@ function showAforo(f) {
     <div class="kpis"><div class="kpi"><small>IMD</small><b>${fmtN(p.imd)}</b></div><div class="kpi"><small>IMD pesados</small><b>${fmtN(p.imdp)}</b></div>
     <div class="kpi"><small>% pesados</small><b>${p.pes != null ? fmtN(p.pes, 1) + ' %' : '—'}</b></div></div>
     <div class="sec"><dl class="kv"><dt>Año</dt><dd>${esc(p.anyo || '—')}</dd></dl></div>
-    <div class="sec"><h4>Coordenadas</h4>${coordsHtml(ll)}</div><div class="actions">${extLinks(ll)}</div>`);
+    ${coordsSec(ll)}<div class="actions">${extLinks(ll)}</div>`);
 }
 function showPlace(kind, name, sub, ll) {
   pin(ll); hiLayer.clearLayers();
   openPanel(`<div class="ph"><div><h3>${esc(name)}</h3><p>${esc(kind)}${sub ? ' · ' + esc(sub) : ''}</p></div></div>
-    <div class="sec"><h4>Coordenadas</h4>${coordsHtml(ll)}</div><div class="actions">${extLinks(ll)}</div>`);
+    ${coordsSec(ll)}<div class="actions">${extLinks(ll)}</div>`);
 }
 function nearestRoad(ll) {
   let best = null;
@@ -789,10 +845,23 @@ function showPoint(ll) {
     <ul class="list"><li><span>${shield(n.f.properties.mat)}</span><span><b>PK ${fmtPK(n.pk)}</b> a ${fmtLen(n.d)}<br><span class="muted">${esc(n.f.properties.den || '')}</span></span>
     <button class="btn" style="margin-left:auto" data-go="${esc(n.f.properties.mat)}|${Math.round(n.pk)}">Ir</button></li></ul></div>` : '';
   openPanel(`<div class="ph"><div><h3>Punto seleccionado</h3><p id="pt-mun">${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}</p></div></div>
-    <div class="sec"><h4>Coordenadas</h4>${coordsHtml(ll)}</div>${near}<div class="actions">${extLinks(ll)}</div>`);
+    ${coordsSec(ll)}${near}<div class="actions">${extLinks(ll)}</div>`);
   load('municipios').then(() => { const m = municipioAt(ll), el = document.getElementById('pt-mun'); if (m && el) el.textContent = 'Término municipal de ' + m; }).catch(() => {});
 }
-map.on('click', e => (measuring ? addMeasure(e.latlng) : showPoint(e.latlng)));
+map.on('click', e => {
+  if (measuring) return addMeasure(e.latlng);
+  if (wmsQuery) return queryWms(e.latlng);
+  if (S.coords) return showPoint(e.latlng);
+  if (!panel.hidden) closePanel();
+});
+function setCoords(on) {
+  S.coords = on; save();
+  $('#b-coords').classList.toggle('on', on);
+  $('#b-coords').setAttribute('aria-pressed', on);
+  if (!opts_silent) toast(on ? 'Coordenadas activadas: pulsa el mapa para verlas' : 'Coordenadas desactivadas');
+}
+let opts_silent = true;
+$('#b-coords').onclick = () => { opts_silent = false; setCoords(!S.coords); };
 
 /** Localiza un PK en una carretera provincial. */
 async function gotoPK(mat, pk) {
@@ -817,7 +886,7 @@ function setMeasuring(on) {
   measuring = on;
   $('#b-measure').classList.toggle('on', on);
   $('#measure-bar').hidden = !on;
-  if (on) { closePanel(); mDots.addTo(map); } else { mPts = []; renderMeasure(); map.removeLayer(mDots); }
+  if (on) { closePanel(); mDots.addTo(map); if (wmsQuery) setWmsQuery(false); } else { mPts = []; renderMeasure(); map.removeLayer(mDots); }
   map.getContainer().style.cursor = on ? 'crosshair' : '';
 }
 function addMeasure(ll) { mPts.push(ll); renderMeasure(); }
@@ -993,7 +1062,9 @@ $('#overlays').innerHTML = OVERLAYS.map(o => `<label class="ov"><input type="che
 OVERLAYS.forEach(o => (document.getElementById('ov-' + o.id).onchange = e => setOverlay(o.id, e.target.checked)));
 
 $('#wms').innerHTML = WMS.map(g => `<div class="grp-title">${esc(g.grp)}</div>` + g.items.map(it =>
-  `<label class="ov"><input type="checkbox" id="wms-${it.id}" ${S.wms[it.id] ? 'checked' : ''}><span>${esc(it.label)}</span></label>`).join('')).join('');
+  `<div class="ov-row"><label class="ov"><input type="checkbox" id="wms-${it.id}" ${S.wms[it.id] ? 'checked' : ''}><span>${esc(it.label)}</span></label>
+   <button class="icon-btn" data-info="${it.id}" aria-label="Información de ${esc(it.label)}" title="Información del servicio"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></div>`).join('')).join('');
+$('#wms').addEventListener('click', e => { const b = e.target.closest('[data-info]'); if (b) { if (isMobile()) closeLayers(); showWmsInfo(b.dataset.info); } });
 WMS.forEach(g => g.items.forEach(it => {
   document.getElementById('wms-' + it.id).onchange = e => setWms(it, e.target.checked);
   if (S.wms[it.id]) setWms(it, true);
@@ -1055,6 +1126,7 @@ addEventListener('hashchange', () => { const h = readHash(); if (h) { map.setVie
 const h0 = readHash();
 map.setView(h0 ? h0.ll : [37.55, -6.85], h0 ? h0.z : 9);
 setBase(S.base, true);
+setCoords(!!S.coords);
 buildPromise = buildBase();
 buildPromise.then(async () => {
   for (const o of OVERLAYS) if (S.ov[o.id]) await setOverlay(o.id, true);

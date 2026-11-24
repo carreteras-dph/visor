@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "CCRIGE";
+  src: local("CCRIGE"), local("Ccrige"), local("CCRIGE Regular"),
+       url("fonts/CCRIGE.woff2") format("woff2"), url("fonts/CCRIGE.woff") format("woff"),
+       url("fonts/CCRIGE.ttf") format("truetype"), url("fonts/CCRIGE.otf") format("opentype");
+  font-display: swap;
+}
 /* Visor Red de Carreteras y Caminos · Diputación de Huelva (v2)
    Estética inspirada en OpenRailwayMap: fondo gris, red en colores vivos,
    barra superior limpia, leyenda viva y paneles tipo "bottom sheet" en móvil. */
@@ -87,6 +94,12 @@ h2 { font-size: 12px; font-weight: 650; color: var(--muted); margin: 18px 0 8px;
 .fab svg { width: 20px; height: 20px; }
 .fab:hover { background: var(--soft); }
 .fab.on { background: var(--accent); color: #fff; }
+#b-coords svg { display: none; }
+.fab-t { font: 700 13px/1 system-ui, sans-serif; letter-spacing: .02em; }
+.ov-row { display: flex; align-items: center; gap: 4px; }
+.ov-row .ov { flex: 1; }
+.wms-legend { max-width: 100%; display: block; background: #fff; }
+.wms-fi { width: 100%; height: 170px; border: 1px solid var(--line); border-radius: 8px; background: #fff; display: block; margin-bottom: 4px; }
 #b-zout { margin-top: -8px; border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; }
 #b-zin { border-radius: 10px 10px 0 0; }
 
@@ -186,7 +199,7 @@ body.panel-open #legend { display: none; }
 .grey .basemap { filter: grayscale(1) brightness(1.06) contrast(.88); }
 
 .sh {
-  display: inline-block; padding: 1px 4px; border-radius: 3px; font: 700 11px/1.15 "Arial Narrow", Arial, sans-serif;
+  display: inline-block; padding: 1px 4px; border-radius: 3px; font: 12px/1.15 "CCRIGE", "Ccrige", "Arial Narrow", Arial, sans-serif;
   white-space: nowrap; transform: translate(-50%, -50%); position: absolute; letter-spacing: .01em;
   box-shadow: 0 0 0 1px rgba(255,255,255,.9);
 }
