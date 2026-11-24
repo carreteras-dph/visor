@@ -1,0 +1,6 @@
+Fuente de las matrículas: CCRIGE
+================================
+Copia aquí el archivo de la fuente con uno de estos nombres (basta uno):
+  CCRIGE.woff2  CCRIGE.woff  CCRIGE.ttf  CCRIGE.otf
+Si la fuente está instalada en el ordenador o el móvil, el visor la usa sin necesidad del archivo.
+Si no está disponible, las matrículas se ven en Arial Narrow / Arial.
