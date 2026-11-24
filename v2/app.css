@@ -126,6 +126,9 @@ h2 { font-size: 12px; font-weight: 650; color: var(--muted); margin: 18px 0 8px;
 .fab-t { font: 700 13px/1 system-ui, sans-serif; letter-spacing: .02em; }
 .ov-row { display: flex; align-items: center; gap: 4px; }
 .ov-row .ov { flex: 1; }
+.wms-bad .ov span { color: #c92a2a; }
+.wms-bad .ov span::after { content: " ⚠"; }
+.ov input:disabled + span { opacity: .7; }
 .wms-legend { max-width: 100%; display: block; background: #fff; }
 .wms-fi { width: 100%; height: 170px; border: 1px solid var(--line); border-radius: 8px; background: #fff; display: block; margin-bottom: 4px; }
 #b-zout { margin-top: -8px; border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; }
@@ -201,6 +204,12 @@ body.panel-open #legend { display: none; }
 .range input { width: 150px; accent-color: var(--accent); }
 .ov .sw { flex: none; width: 22px; height: 6px; border-radius: 3px; }
 .ov small { color: var(--muted); margin-left: auto; font-size: 12px; }
+.wms-grp { border-top: 1px solid var(--line); }
+.wms-grp summary { cursor: pointer; padding: 10px 0; font-size: 14px; font-weight: 600; list-style: none; display: flex; align-items: center; gap: 6px; }
+.wms-grp summary::-webkit-details-marker { display: none; }
+.wms-grp summary::before { content: "›"; display: inline-block; width: 12px; transition: transform .15s; color: var(--muted); }
+.wms-grp[open] summary::before { transform: rotate(90deg); }
+.wms-grp summary small { color: var(--muted); font-weight: 400; }
 .grp-title { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
 
 /* medición */

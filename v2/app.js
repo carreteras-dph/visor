@@ -204,22 +204,56 @@ const OVERLAYS = [
   { id: 'zonas', label: 'Zonas de conservación', poly: 'rgba(47,158,68,.25)', def: false }
 ];
 
+const MITECO_KO = 'El servidor WMS del Ministerio (wms.mapama.gob.es) devuelve un error interno incluso a la petición GetCapabilities (comprobado el 24/11/2026). No es un fallo del visor: se podrá reactivar cuando lo reparen.';
+const JA = 'https://www.juntadeandalucia.es/medioambiente/mapwms/';
+const IGN_ZI = 'https://servicios.idee.es/wms-inspire/riesgos-naturales/inundaciones';
+const IGN_MDT = 'https://servicios.idee.es/wms-inspire/mdt';
+const IGME = 'https://mapas.igme.es/gis/services/Cartografia_Geologica/IGME_MAGNA_50/MapServer/WMSServer';
+const SIU = 'https://mapas.fomento.gob.es/arcgis/services/SIU/Servicios_OGC/MapServer/WMSServer';
+const BICA = 'https://ws096.juntadeandalucia.es/geoserver/bica_public/wms';
+const CAT = 'https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx';
 const WMS = [
-  { grp: 'Medio ambiente (REDIAM)', org: 'Junta de Andalucía · Red de Información Ambiental (REDIAM)', items: [
-    { id: 'rn2000', label: 'Red Natura 2000', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'red_natura_2000' },
-    { id: 'enp', label: 'Espacios Naturales Protegidos', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'eennpp' },
-    { id: 'vvpp', label: 'Vías pecuarias', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_Inventario_VVPP', layers: 'REDIAM' },
-    { id: 'ramsar', label: 'Humedales Ramsar', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'humedales_ramsar' },
-    { id: 'biosfera', label: 'Reservas de la Biosfera', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'reservas_biosfera' },
-    { id: 'geoparques', label: 'Geoparques', url: 'https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_RENPA', layers: 'geoparques' }] },
-  { grp: 'Hidrografía (IGN)', org: 'Instituto Geográfico Nacional · IDEE (INSPIRE)', items: [
-    { id: 'hred', label: 'Red hidrográfica', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.Network' },
-    { id: 'hmasas', label: 'Masas de agua', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.PhysicalWaters.Waterbodies' },
-    { id: 'hhum', label: 'Humedales', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.PhysicalWaters.Wetland' },
-    { id: 'hlim', label: 'Límite tierra-agua', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.PhysicalWaters.LandWaterBoundary' }] },
-  { grp: 'Otros', items: [
-    { id: 'catastro', label: 'Catastro', org: 'Dirección General del Catastro', url: 'https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', layers: 'Catastro' },
-    { id: 'dpmt', label: 'Dominio Público Marítimo-Terrestre', org: 'MITECO · Dirección General de la Costa y el Mar', url: 'https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx', layers: 'AM.CoastalZoneManagementArea' }] }
+  { grp: 'Agua e inundaciones', org: 'MITECO (SNCZI) · servido por el IGN', items: [
+    { id: 'zi10', label: 'Zona inundable T = 10 años', url: IGN_ZI, layers: 'NZ.Flood.FluvialT10' },
+    { id: 'zi100', label: 'Zona inundable T = 100 años', url: IGN_ZI, layers: 'NZ.Flood.FluvialT100' },
+    { id: 'zi500', label: 'Zona inundable T = 500 años', url: IGN_ZI, layers: 'NZ.Flood.FluvialT500' },
+    { id: 'zicost', label: 'Inundación costera T = 100 años', url: IGN_ZI, layers: 'NZ.Flood.MarinaT100' },
+    { id: 'dph', label: 'DPH cartográfico y zona de policía', org: 'MITECO', url: 'https://wms.mapama.gob.es/sig/Agua/DPHCartografico/wms.aspx', layers: '', broken: MITECO_KO },
+    { id: 'hred', label: 'Red hidrográfica', org: 'Instituto Geográfico Nacional · IDEE (INSPIRE)', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.Network' },
+    { id: 'hmasas', label: 'Masas de agua', org: 'Instituto Geográfico Nacional · IDEE (INSPIRE)', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.PhysicalWaters.Waterbodies' },
+    { id: 'hhum', label: 'Humedales', org: 'Instituto Geográfico Nacional · IDEE (INSPIRE)', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.PhysicalWaters.Wetland' },
+    { id: 'hlim', label: 'Límite tierra-agua', org: 'Instituto Geográfico Nacional · IDEE (INSPIRE)', url: 'https://servicios.idee.es/wms-inspire/hidrografia', layers: 'HY.PhysicalWaters.LandWaterBoundary' }] },
+  { grp: 'Geología y relieve', items: [
+    { id: 'magna', label: 'Geología MAGNA 1:50.000 · litologías', org: 'IGME-CSIC', url: IGME, layers: '0' },
+    { id: 'magnaf', label: 'Geología MAGNA · contactos y fallas', org: 'IGME-CSIC', url: IGME, layers: '2' },
+    { id: 'curvas', label: 'Curvas de nivel', org: 'Instituto Geográfico Nacional · MDT', url: IGN_MDT, layers: 'EL.ContourLine' },
+    { id: 'mdt', label: 'Modelo digital del terreno (sombreado)', org: 'Instituto Geográfico Nacional · MDT', url: IGN_MDT, layers: 'EL.GridCoverage' }] },
+  { grp: 'Catastro', org: 'Dirección General del Catastro', items: [
+    { id: 'catastro', label: 'Catastro (completo)', url: CAT, layers: 'Catastro' },
+    { id: 'catparc', label: 'Parcelas y referencias', url: CAT, layers: 'PARCELA,TXTPARCELA' },
+    { id: 'catcons', label: 'Edificaciones', url: CAT, layers: 'CONSTRU' }] },
+  { grp: 'Urbanismo (SIU)', org: 'Ministerio de Vivienda · Sistema de Información Urbana', items: [
+    { id: 'siuclas', label: 'Clasificación del suelo', url: SIU, layers: 'OGC_Clases_Suelo' },
+    { id: 'siusect', label: 'Sectores de planeamiento', url: SIU, layers: 'OGC_Sectores' },
+    { id: 'siuurb', label: 'Áreas urbanas', url: SIU, layers: 'OGC_Areas_Urbanas' }] },
+  { grp: 'Medio ambiente (REDIAM)', frame: false, org: 'Junta de Andalucía · Red de Información Ambiental (REDIAM)', items: [
+    { id: 'rn2000', label: 'Red Natura 2000', url: JA + 'REDIAM_RENPA', layers: 'red_natura_2000' },
+    { id: 'enp', label: 'Espacios Naturales Protegidos', url: JA + 'REDIAM_RENPA', layers: 'eennpp' },
+    { id: 'vvpp', label: 'Vías pecuarias', url: JA + 'REDIAM_Inventario_VVPP', layers: 'REDIAM' },
+    { id: 'montes', label: 'Montes públicos (catálogo)', url: JA + 'REDIAM_Catalogo_Montes_Publicos_Andalucia', layers: 'Catalogo_Montes_Públicos_Andalucia' },
+    { id: 'mup', label: 'Montes de utilidad pública', url: JA + 'REDIAM_Catalogo_Montes_Publicos_Andalucia', layers: 'Montes_de_utilidad_publica' },
+    { id: 'hic', label: 'Hábitats de interés comunitario', url: JA + 'REDIAM_habitats_interes_comunitario', layers: 'HIC_capa_unica_terrestres' },
+    { id: 'fuego', label: 'Áreas recorridas por el fuego (1975–hoy)', url: JA + 'REDIAM_historico_areas_recorridas_fuego', layers: 'historico_incendios' },
+    { id: 'ramsar', label: 'Humedales Ramsar', url: JA + 'REDIAM_RENPA', layers: 'humedales_ramsar' },
+    { id: 'biosfera', label: 'Reservas de la Biosfera', url: JA + 'REDIAM_RENPA', layers: 'reservas_biosfera' },
+    { id: 'geoparques', label: 'Geoparques', url: JA + 'REDIAM_RENPA', layers: 'geoparques' }] },
+  { grp: 'Patrimonio cultural', frame: false, org: 'Junta de Andalucía · Consejería de Cultura', items: [
+    { id: 'bicpol', label: 'Catálogo General del Patrimonio (BIC…) · áreas', url: BICA, layers: 'CGPHA_EXPEDIENTE_POLIGONAL' },
+    { id: 'bicpto', label: 'Catálogo General del Patrimonio · puntos', url: BICA, layers: 'CGPHA_EXPEDIENTE_PUNTUAL' },
+    { id: 'bicent', label: 'Entornos de protección', url: BICA, layers: 'CGPHA_ENTORNO' },
+    { id: 'zsa', label: 'Zonas de servidumbre arqueológica', url: BICA, layers: 'ZSA_EXPEDIENTE' }] },
+  { grp: 'Costas', items: [
+    { id: 'dpmt', label: 'Dominio Público Marítimo-Terrestre', org: 'MITECO · Dirección General de la Costa y el Mar', url: 'https://wms.mapama.gob.es/sig/Costas/DPMT/wms.aspx', layers: 'AM.CoastalZoneManagementArea', broken: MITECO_KO }] }
 ];
 
 /* ---------- estado persistente ---------- */
@@ -550,7 +584,7 @@ function setBase(id, userGrey) {
   $('#grey').checked = !!S.grey;
 }
 const wmsLayers = {};
-const WMS_ALL = WMS.flatMap(g => g.items.map(it => ({ ...it, org: it.org || g.org, grp: g.grp })));
+const WMS_ALL = WMS.flatMap(g => g.items.map(it => ({ frame: g.frame, ...it, org: it.org || g.org, grp: g.grp })));
 const wmsUrl = (it, params) => it.url + (it.url.includes('?') ? (/[?&]$/.test(it.url) ? '' : '&') : '?') + new URLSearchParams(params).toString();
 const capsUrl = it => wmsUrl(it, { SERVICE: 'WMS', REQUEST: 'GetCapabilities' });
 const legendUrl = it => wmsUrl(it, { SERVICE: 'WMS', VERSION: '1.1.1', REQUEST: 'GetLegendGraphic', FORMAT: 'image/png', LAYER: it.layers.split(',')[0] });
@@ -561,11 +595,12 @@ function showWmsInfo(id) {
     <div class="sec"><dl class="kv"><dt>Organismo</dt><dd>${esc(it.org || '—')}</dd>
       <dt>Capa</dt><dd class="coord">${esc(it.layers)}</dd>
       <dt>URL</dt><dd class="coord" style="overflow-wrap:anywhere">${esc(it.url)}</dd>
-      <dt>Estado</dt><dd>${S.wms[it.id] ? 'Activada' : 'Desactivada'}</dd></dl></div>
+      <dt>Estado</dt><dd>${it.broken ? '<b style="color:#c92a2a">No disponible</b>' : S.wms[it.id] ? 'Activada' : 'Desactivada'}</dd></dl>
+      ${it.broken ? `<p class="lg-note">${esc(it.broken)}</p>` : ''}</div>
     <div class="sec"><h4>Leyenda</h4><img class="wms-legend" src="${esc(legendUrl(it))}" alt="Leyenda de ${esc(it.label)}"
       onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'muted',textContent:'El servicio no ofrece leyenda.'}))"></div>
     <div class="actions">
-      <button class="btn primary" data-wms-toggle="${esc(it.id)}">${S.wms[it.id] ? 'Desactivar' : 'Activar'} capa</button>
+      ${it.broken ? '' : `<button class="btn primary" data-wms-toggle="${esc(it.id)}">${S.wms[it.id] ? 'Desactivar' : 'Activar'} capa</button>`}
       <a class="btn" target="_blank" rel="noopener" href="${esc(capsUrl(it))}">${ICON.ext}GetCapabilities</a>
     </div>
     <p class="lg-note">Para consultar qué hay en un punto, activa la capa y usa el botón <b>Consultar WMS</b> (i) de la derecha.</p>`);
@@ -591,19 +626,53 @@ function queryWms(ll) {
   const act = WMS_ALL.filter(w => S.wms[w.id]);
   pin(ll); hiLayer.clearLayers();
   openPanel(`<div class="ph"><div><h3>Consulta WMS</h3><p>${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}</p></div></div>` +
-    (act.length ? act.map(it => {
-      const u = featureInfoUrl(it, ll);
-      return `<div class="sec"><h4>${esc(it.label)}</h4><iframe class="wms-fi" src="${esc(u)}" title="${esc(it.label)}" loading="lazy" referrerpolicy="no-referrer"></iframe>
-        <a class="lg-note" target="_blank" rel="noopener" href="${esc(u)}">Abrir respuesta en una pestaña nueva</a></div>`;
-    }).join('') : '<p class="muted">No hay servicios WMS activos. Actívalos en <b>Capas → Servicios WMS</b>.</p>') +
-    `<p class="lg-note">Si un recuadro sale vacío, en ese punto no hay elementos de esa capa o el servicio no admite la consulta.</p>`);
+    (act.length ? act.map(it => `<div class="sec"><h4>${esc(it.label)}</h4><div id="fi-${it.id}"><span class="spin"></span> Consultando…</div></div>`).join('')
+      : '<p class="muted">No hay servicios WMS activos. Actívalos en <b>Capas → Servicios WMS</b>.</p>'));
+  act.forEach(it => featureInfo(it, ll));
 }
+// 1º intenta leer la respuesta directamente (si el servidor lo permite, CORS) y la muestra aquí.
+// Si el servidor no lo permite y además prohíbe insertarlo (p. ej. Junta de Andalucía),
+// ofrece abrir la respuesta en una ventana emergente, que siempre funciona.
+async function featureInfo(it, ll) {
+  const u = featureInfoUrl(it, ll), box = () => document.getElementById('fi-' + it.id);
+  const popupBtn = `<button class="btn" data-popup="${esc(u)}">${ICON.ext}Ver información en ventana</button>`;
+  try {
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 12000);
+    const r = await fetch(u, { signal: ctl.signal }); clearTimeout(t);
+    const html = await r.text();
+    if (!box()) return;
+    const textOnly = html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>|&nbsp;/gi, '').trim();
+    if (!r.ok || /ServiceException/i.test(html)) { box().innerHTML = `<span class="muted">El servicio devolvió un error.</span> ${popupBtn}`; return; }
+    if (!textOnly) { box().innerHTML = '<span class="muted">Sin elementos de esta capa en este punto.</span>'; return; }
+    const f = document.createElement('iframe');
+    f.className = 'wms-fi'; f.setAttribute('sandbox', 'allow-popups allow-popups-to-escape-sandbox'); f.title = it.label;
+    f.srcdoc = '<base target="_blank"><style>body{font:13px system-ui,sans-serif;margin:6px;color:#1d232b}table{border-collapse:collapse}td,th{border:1px solid #ddd;padding:2px 5px;text-align:left}</style>' + html;
+    box().replaceChildren(f);
+  } catch (e) {
+    if (!box()) return;
+    if (it.frame === false) box().innerHTML = `<p class="muted" style="margin:0 0 6px">Este servidor no permite mostrar su respuesta dentro del visor.</p>${popupBtn}`;
+    else box().innerHTML = `<iframe class="wms-fi" src="${esc(u)}" title="${esc(it.label)}" referrerpolicy="no-referrer"></iframe>${popupBtn}`;
+  }
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-popup]'); if (!b) return;
+  const w = window.open(b.dataset.popup, 'wmsinfo', 'width=560,height=640,scrollbars=yes,resizable=yes');
+  if (!w) location.href = b.dataset.popup;
+});
 $('#b-wmsq').onclick = () => setWmsQuery(!wmsQuery);
 function setWms(it, on) {
+  if (it.broken && on) { toast('Servicio no disponible: ' + it.label); on = false; const cb = document.getElementById('wms-' + it.id); if (cb) cb.checked = false; }
   S.wms[it.id] = on; save();
-  if (!wmsLayers[it.id]) wmsLayers[it.id] = L.tileLayer.wms(it.url, { layers: it.layers, format: 'image/png', transparent: true, pane: 'p-wms', opacity: 0.85, maxZoom: 20 });
+  if (!wmsLayers[it.id]) {
+    const l = wmsLayers[it.id] = L.tileLayer.wms(it.url, { layers: it.layers, styles: it.styles || '', version: it.version || '1.1.1', format: 'image/png', transparent: true, pane: 'p-wms', opacity: 0.85, maxZoom: 20 });
+    // vigilancia: si el servicio no devuelve ninguna tesela, avisar y marcarlo
+    let ok = 0, bad = 0, warned = false;
+    l.on('tileload', () => { ok++; markWms(it.id, false); });
+    l.on('tileerror', () => { bad++; if (!ok && bad >= 4 && !warned) { warned = true; markWms(it.id, true); toast(`${it.label}: el servidor no responde ahora mismo`, 4000); } });
+  }
   on ? map.addLayer(wmsLayers[it.id]) : map.removeLayer(wmsLayers[it.id]);
 }
+function markWms(id, bad) { const r = document.getElementById('wms-' + id)?.closest('.ov-row'); if (r) r.classList.toggle('wms-bad', bad); }
 
 /* ================================================================
    Leyenda
@@ -1180,13 +1249,13 @@ $('#overlays').innerHTML = OVERLAYS.map(o => `<label class="ov"><input type="che
   <span>${esc(o.label)}</span>${o.note ? `<small>${esc(o.note)}</small>` : ''}</label>`).join('');
 OVERLAYS.forEach(o => (document.getElementById('ov-' + o.id).onchange = e => setOverlay(o.id, e.target.checked)));
 
-$('#wms').innerHTML = WMS.map(g => `<div class="grp-title">${esc(g.grp)}</div>` + g.items.map(it =>
-  `<div class="ov-row"><label class="ov"><input type="checkbox" id="wms-${it.id}" ${S.wms[it.id] ? 'checked' : ''}><span>${esc(it.label)}</span></label>
-   <button class="icon-btn" data-info="${it.id}" aria-label="Información de ${esc(it.label)}" title="Información del servicio"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></div>`).join('')).join('');
+$('#wms').innerHTML = WMS.map(g => `<details class="wms-grp" ${g.items.some(it => S.wms[it.id]) ? 'open' : ''}><summary>${esc(g.grp)} <small>${g.items.length}</small></summary>` + g.items.map(it =>
+  `<div class="ov-row${it.broken ? ' wms-bad' : ''}"><label class="ov"><input type="checkbox" id="wms-${it.id}" ${S.wms[it.id] && !it.broken ? 'checked' : ''} ${it.broken ? 'disabled' : ''}><span>${esc(it.label)}${it.broken ? ' <small>(no disponible)</small>' : ''}</span></label>
+   <button class="icon-btn" data-info="${it.id}" aria-label="Información de ${esc(it.label)}" title="Información del servicio"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></div>`).join('') + '</details>').join('');
 $('#wms').addEventListener('click', e => { const b = e.target.closest('[data-info]'); if (b) { if (isMobile()) closeLayers(); showWmsInfo(b.dataset.info); } });
 WMS.forEach(g => g.items.forEach(it => {
-  document.getElementById('wms-' + it.id).onchange = e => setWms(it, e.target.checked);
-  if (S.wms[it.id]) setWms(it, true);
+  document.getElementById('wms-' + it.id).onchange = e => setWms(WMS_ALL.find(w => w.id === it.id), e.target.checked);
+  if (S.wms[it.id]) setWms(WMS_ALL.find(w => w.id === it.id), true);
 }));
 
 const layersEl = $('#layers');
