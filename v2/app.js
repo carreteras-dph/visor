@@ -455,7 +455,7 @@ function placeLabels() {
       const f = l.feature, mat = f.properties.mat;
       const lb = l.getBounds();
       if (!mat || !lb.isValid() || !lb.intersects(vb)) return;
-      const k = kind(f), txt = mat, w = txt.length * 6.6 + 10, h = 16;
+      const k = kind(f), txt = mat, w = txt.length * 7.4 + 12, h = 18;
       const lls = l.getLatLngs(), parts = Array.isArray(lls[0]) ? lls : [lls];
       for (const part of parts) {
         const pts = part.map(ll => map.latLngToContainerPoint(ll));
@@ -689,7 +689,7 @@ function highlight(features) {
   hiLayer.addLayer(g);
   reorder();
 }
-const shield = (mat, k = 'prov') => `<span class="sh ${k}" style="position:static;transform:none;font-size:14px;padding:3px 7px;flex:none">${esc(mat)}</span>`;
+const shield = (mat, k = 'prov') => `<span class="sh ${k}" style="position:static;transform:none;font-size:15px;height:24px;padding:0 8px;flex:none">${esc(mat)}</span>`;
 const coordsHtml = ll => {
   const u = UTM.fwd(ll.lat, ll.lng, 29);
   return `<dl class="kv"><dt>WGS84</dt><dd class="coord">${ll.lat.toFixed(6)}, ${ll.lng.toFixed(6)}</dd>
@@ -976,7 +976,7 @@ function renderResults(list, more) {
   if (!list.length && !more) { res.innerHTML = q.value.trim() ? '<li class="grp">Sin resultados</li>' : ''; res.hidden = !q.value.trim(); return; }
   let n = 0;
   res.innerHTML = list.map(i => i.grp ? `<li class="grp">${esc(i.grp)}</li>`
-    : `<li role="option" data-i="${n}" aria-selected="${n++ === 0}">${i.sh ? shield(i.title, i.sh).replace('font-size:14px', 'font-size:12px') : `<span class="kind">${KIND[i.k] || KIND.place}</span>`}
+    : `<li role="option" data-i="${n}" aria-selected="${n++ === 0}">${i.sh ? shield(i.title, i.sh).replace('font-size:15px;height:24px', 'font-size:13px;height:20px') : `<span class="kind">${KIND[i.k] || KIND.place}</span>`}
        <span class="t"><span>${i.sh ? esc(i.sub || '') : esc(i.title)}</span>${i.sh ? '' : `<small>${esc(i.sub || '')}</small>`}</span></li>`).join('')
     + (more ? '<li class="grp"><span class="spin"></span> Buscando lugares…</li>' : '');
   res.hidden = false;

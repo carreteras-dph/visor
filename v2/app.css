@@ -1,8 +1,36 @@
 @font-face {
   font-family: "CCRIGE";
-  src: local("CCRIGE"), local("Ccrige"), local("CCRIGE Regular"),
-       url("fonts/CCRIGE.woff2") format("woff2"), url("fonts/CCRIGE.woff") format("woff"),
-       url("fonts/CCRIGE.ttf") format("truetype"), url("fonts/CCRIGE.otf") format("opentype");
+  src: local("CCRIGE"), local("Ccrige"), local("CCRIGE Regular"), local("CCRIGE-Regular"),
+       url("fonts/CCRIGE.woff2") format("woff2"),
+       url("fonts/ccrige.woff2") format("woff2"),
+       url("fonts/Ccrige.woff2") format("woff2"),
+       url("fonts/CCRIGE-Regular.woff2") format("woff2"),
+       url("fonts/ccrige-regular.woff2") format("woff2"),
+       url("fonts/CCRIGE.woff") format("woff"),
+       url("fonts/ccrige.woff") format("woff"),
+       url("fonts/Ccrige.woff") format("woff"),
+       url("fonts/CCRIGE-Regular.woff") format("woff"),
+       url("fonts/ccrige-regular.woff") format("woff"),
+       url("fonts/CCRIGE.ttf") format("truetype"),
+       url("fonts/ccrige.ttf") format("truetype"),
+       url("fonts/Ccrige.ttf") format("truetype"),
+       url("fonts/CCRIGE-Regular.ttf") format("truetype"),
+       url("fonts/ccrige-regular.ttf") format("truetype"),
+       url("fonts/CCRIGE.otf") format("opentype"),
+       url("fonts/ccrige.otf") format("opentype"),
+       url("fonts/Ccrige.otf") format("opentype"),
+       url("fonts/CCRIGE-Regular.otf") format("opentype"),
+       url("fonts/ccrige-regular.otf") format("opentype"),
+       url("fonts/CCRIGE.TTF") format("truetype"),
+       url("fonts/ccrige.TTF") format("truetype"),
+       url("fonts/Ccrige.TTF") format("truetype"),
+       url("fonts/CCRIGE-Regular.TTF") format("truetype"),
+       url("fonts/ccrige-regular.TTF") format("truetype"),
+       url("fonts/CCRIGE.OTF") format("opentype"),
+       url("fonts/ccrige.OTF") format("opentype"),
+       url("fonts/Ccrige.OTF") format("opentype"),
+       url("fonts/CCRIGE-Regular.OTF") format("opentype"),
+       url("fonts/ccrige-regular.OTF") format("opentype");
   font-display: swap;
 }
 /* Visor Red de Carreteras y Caminos · Diputación de Huelva (v2)
@@ -199,8 +227,11 @@ body.panel-open #legend { display: none; }
 .grey .basemap { filter: grayscale(1) brightness(1.06) contrast(.88); }
 
 .sh {
-  display: inline-block; padding: 1px 4px; border-radius: 3px; font: 12px/1.15 "CCRIGE", "Ccrige", "Arial Narrow", Arial, sans-serif;
-  white-space: nowrap; transform: translate(-50%, -50%); position: absolute; letter-spacing: .01em;
+  /* texto centrado en la placa con cualquier fuente: caja de altura fija + recorte a la altura de mayúsculas */
+  display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+  height: 17px; padding: 0 5px; border-radius: 3px; text-align: center;
+  font: 13px/1 "CCRIGE", "Ccrige", "Arial Narrow", Arial, sans-serif; text-box: trim-both cap alphabetic;
+  white-space: nowrap; transform: translate(-50%, -50%); position: absolute; left: 0; top: 0; letter-spacing: .01em;
   box-shadow: 0 0 0 1px rgba(255,255,255,.9);
 }
 .sh.prov { background: #ffcc1a; color: #111; border: 1px solid #222; }
