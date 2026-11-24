@@ -68,9 +68,9 @@ h2 { font-size: 12px; font-weight: 650; color: var(--muted); margin: 18px 0 8px;
   box-shadow: 0 1px 0 var(--line), 0 2px 10px rgba(0,0,0,.06);
 }
 .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; color: inherit; flex: none; }
-.brand svg { width: 32px; height: 32px; stroke: none; }
-.brand span { display: flex; flex-direction: column; line-height: 1.1; }
-.brand b { font-size: 15px; }
+.brand-logo { height: 40px; width: auto; display: block; border-radius: 4px; }
+.brand span { display: flex; flex-direction: column; line-height: 1.1; padding-left: 10px; border-left: 1px solid var(--line); }
+.brand b { font-size: 16px; white-space: nowrap; }
 .brand small { font-size: 12px; color: var(--muted); }
 
 .search { position: relative; flex: 1 1 300px; min-width: 220px; max-width: 460px; }
@@ -230,7 +230,7 @@ body.panel-open #legend { display: none; }
   /* texto centrado en la placa con cualquier fuente: caja de altura fija + recorte a la altura de mayúsculas */
   display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
   height: 17px; padding: 0 5px; border-radius: 3px; text-align: center;
-  font: 13px/1 "CCRIGE", "Ccrige", "Arial Narrow", Arial, sans-serif; text-box: trim-both cap alphabetic;
+  font: 600 13.5px/1 "CCRIGE", "Ccrige", "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif; text-box: trim-both cap alphabetic;
   white-space: nowrap; transform: translate(-50%, -50%); position: absolute; left: 0; top: 0; letter-spacing: .01em;
   box-shadow: 0 0 0 1px rgba(255,255,255,.9);
 }
@@ -274,7 +274,7 @@ body.sv-open #legend { display: none; }
   :root { --top: 104px; }
   #topbar { flex-wrap: wrap; height: auto; min-height: var(--top); padding: 8px 10px 6px; gap: 8px 8px; align-content: flex-start; padding-top: max(8px, env(safe-area-inset-top)); }
   .brand span { display: none; }
-  .brand svg { width: 34px; height: 34px; }
+  .brand-logo { height: 34px; max-width: 120px; object-fit: contain; }
   .search { flex: 1 1 0; max-width: none; }
   .chips { flex: 1 0 100%; margin: 0 -10px; padding: 2px 10px 2px; }
   .chip { height: 32px; padding: 0 12px; font-size: 13.5px; }

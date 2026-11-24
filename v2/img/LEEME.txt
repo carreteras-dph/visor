@@ -1,0 +1,2 @@
+Guarda aquí el logo con el nombre: logo-diputacion.jpg
+Si no está, el visor lo carga directamente de www.diphuelva.es.
